@@ -163,7 +163,28 @@ JSON
 
 For "Design carousel images" tasks, use `"priority": "🟡 Medium"`.
 
-### Step 8 — Confirm to user
+### Step 8 — Log the run
+
+Before confirming to the user, append a run record:
+
+```bash
+python scripts/log_run.py <<'JSON'
+{
+  "project_id": "<project_id>",
+  "project_title": "<title>",
+  "assets": [
+    {"asset_id": "...", "asset_name": "...", "action": "created | existing"},
+    ...
+  ],
+  "todos": [
+    {"task_id": "...", "task": "...", "action": "created | existing"},
+    ...
+  ]
+}
+JSON
+```
+
+### Step 9 — Confirm to user
 
 ```
 ✅ Project & Assets Created

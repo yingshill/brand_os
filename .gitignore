@@ -3,3 +3,7 @@
 .eval/
 artifacts/_preview.html
 artifacts/_swatches.html
+__pycache__/
+*.pyc
+*.pyo
+logs/*.jsonl
