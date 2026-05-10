@@ -1,0 +1,5 @@
+.env
+.cache/
+.eval/
+artifacts/_preview.html
+artifacts/_swatches.html
