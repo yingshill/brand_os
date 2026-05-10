@@ -9,6 +9,29 @@ from typing import Optional
 import requests
 from dotenv import load_dotenv
 
+_MAX_RETRIES = 3
+_BASE_DELAY = 1.0  # seconds
+
+
+def _request_with_retry(method: str, url: str, **kwargs) -> requests.Response:
+    """Wrap requests with exponential backoff on 429 and 5xx responses."""
+    last_response = None
+    for attempt in range(_MAX_RETRIES + 1):
+        r = requests.request(method, url, **kwargs)
+        if r.status_code != 429 and r.status_code < 500:
+            r.raise_for_status()
+            return r
+        last_response = r
+        if attempt < _MAX_RETRIES:
+            delay = (
+                float(r.headers.get('Retry-After', _BASE_DELAY * (2 ** attempt)))
+                if r.status_code == 429
+                else _BASE_DELAY * (2 ** attempt)
+            )
+            time.sleep(delay)
+    last_response.raise_for_status()
+    return last_response  # unreachable; satisfies type checker
+
 load_dotenv(Path(__file__).parent.parent / '.env')
 
 NOTION_TOKEN = os.environ.get('NOTION_TOKEN', '')
@@ -85,8 +108,7 @@ def get_page(page_id: str) -> dict:
     cached = _cache_get(key)
     if cached is not None:
         return cached
-    r = requests.get(f"{BASE_URL}/pages/{page_id}", headers=HEADERS)
-    r.raise_for_status()
+    r = _request_with_retry('GET', f"{BASE_URL}/pages/{page_id}", headers=HEADERS)
     result = r.json()
     _cache_set(key, result)
     return result
@@ -97,8 +119,7 @@ def get_page_blocks(page_id: str) -> list:
     cached = _cache_get(key)
     if cached is not None:
         return cached
-    r = requests.get(f"{BASE_URL}/blocks/{page_id}/children", headers=HEADERS)
-    r.raise_for_status()
+    r = _request_with_retry('GET', f"{BASE_URL}/blocks/{page_id}/children", headers=HEADERS)
     result = r.json().get('results', [])
     _cache_set(key, result)
     return result
@@ -115,8 +136,7 @@ def query_database(db_id: str, filter_obj: Optional[dict] = None, sorts: Optiona
     cached = _cache_get(key)
     if cached is not None:
         return cached
-    r = requests.post(f"{BASE_URL}/databases/{db_id}/query", headers=HEADERS, json=body)
-    r.raise_for_status()
+    r = _request_with_retry('POST', f"{BASE_URL}/databases/{db_id}/query", headers=HEADERS, json=body)
     result = r.json().get('results', [])
     _cache_set(key, result)
     return result
@@ -126,8 +146,7 @@ def create_page(parent_db_id: str, properties: dict, children: Optional[list] = 
     body = {'parent': {'database_id': parent_db_id}, 'properties': properties}
     if children:
         body['children'] = children
-    r = requests.post(f"{BASE_URL}/pages", headers=HEADERS, json=body)
-    r.raise_for_status()
+    r = _request_with_retry('POST', f"{BASE_URL}/pages", headers=HEADERS, json=body)
     # bust all cached queries for this database so subsequent reads see the new page
     for p in _CACHE_DIR.glob(f"db_{parent_db_id}_*.json"):
         p.unlink(missing_ok=True)
@@ -135,15 +154,13 @@ def create_page(parent_db_id: str, properties: dict, children: Optional[list] = 
 
 
 def update_page(page_id: str, properties: dict) -> dict:
-    r = requests.patch(f"{BASE_URL}/pages/{page_id}", headers=HEADERS, json={'properties': properties})
-    r.raise_for_status()
+    r = _request_with_retry('PATCH', f"{BASE_URL}/pages/{page_id}", headers=HEADERS, json={'properties': properties})
     _cache_bust(f"page_{page_id}")
     return r.json()
 
 
 def append_blocks(page_id: str, children: list) -> dict:
-    r = requests.patch(f"{BASE_URL}/blocks/{page_id}/children", headers=HEADERS, json={'children': children})
-    r.raise_for_status()
+    r = _request_with_retry('PATCH', f"{BASE_URL}/blocks/{page_id}/children", headers=HEADERS, json={'children': children})
     _cache_bust(f"blocks_{page_id}")
     return r.json()
 

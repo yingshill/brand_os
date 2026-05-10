@@ -1,14 +1,96 @@
-"""Tests for notion_client.py — cache logic, property helpers, block helpers, extract_text."""
+"""Tests for notion_client.py — cache logic, retry logic, property helpers, block helpers, extract_text."""
 import json
 import time
 import tempfile
 import pytest
+import requests
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock, call
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'scripts'))
 
 import notion_client as nc
+
+
+# ── Retry logic ──────────────────────────────────────────────────────────────
+
+def _make_response(status_code, headers=None, json_data=None):
+    r = MagicMock()
+    r.status_code = status_code
+    r.headers = headers or {}
+    r.json.return_value = json_data or {}
+    if status_code >= 400:
+        r.raise_for_status.side_effect = requests.HTTPError(response=r)
+    else:
+        r.raise_for_status.return_value = None
+    return r
+
+
+class TestRetryLogic:
+    @patch('notion_client.time.sleep')
+    @patch('notion_client.requests.request')
+    def test_success_on_first_attempt(self, mock_req, mock_sleep):
+        mock_req.return_value = _make_response(200)
+        result = nc._request_with_retry('GET', 'https://example.com')
+        assert result.status_code == 200
+        mock_sleep.assert_not_called()
+
+    @patch('notion_client.time.sleep')
+    @patch('notion_client.requests.request')
+    def test_retries_on_429_then_succeeds(self, mock_req, mock_sleep):
+        mock_req.side_effect = [_make_response(429), _make_response(429), _make_response(200)]
+        result = nc._request_with_retry('GET', 'https://example.com')
+        assert result.status_code == 200
+        assert mock_req.call_count == 3
+        assert mock_sleep.call_count == 2
+
+    @patch('notion_client.time.sleep')
+    @patch('notion_client.requests.request')
+    def test_raises_after_max_retries_on_429(self, mock_req, mock_sleep):
+        mock_req.side_effect = [_make_response(429)] * (nc._MAX_RETRIES + 1)
+        with pytest.raises(requests.HTTPError):
+            nc._request_with_retry('GET', 'https://example.com')
+        assert mock_req.call_count == nc._MAX_RETRIES + 1
+        assert mock_sleep.call_count == nc._MAX_RETRIES
+
+    @patch('notion_client.time.sleep')
+    @patch('notion_client.requests.request')
+    def test_retries_on_500_then_succeeds(self, mock_req, mock_sleep):
+        mock_req.side_effect = [_make_response(500), _make_response(200)]
+        result = nc._request_with_retry('GET', 'https://example.com')
+        assert result.status_code == 200
+        assert mock_req.call_count == 2
+        mock_sleep.assert_called_once()
+
+    @patch('notion_client.time.sleep')
+    @patch('notion_client.requests.request')
+    def test_no_retry_on_400(self, mock_req, mock_sleep):
+        mock_req.return_value = _make_response(400)
+        with pytest.raises(requests.HTTPError):
+            nc._request_with_retry('GET', 'https://example.com')
+        assert mock_req.call_count == 1
+        mock_sleep.assert_not_called()
+
+    @patch('notion_client.time.sleep')
+    @patch('notion_client.requests.request')
+    def test_uses_retry_after_header(self, mock_req, mock_sleep):
+        mock_req.side_effect = [
+            _make_response(429, headers={'Retry-After': '7'}),
+            _make_response(200),
+        ]
+        nc._request_with_retry('GET', 'https://example.com')
+        mock_sleep.assert_called_once_with(7.0)
+
+    @patch('notion_client.time.sleep')
+    @patch('notion_client.requests.request')
+    def test_exponential_backoff_on_500(self, mock_req, mock_sleep):
+        mock_req.side_effect = [
+            _make_response(500),
+            _make_response(500),
+            _make_response(200),
+        ]
+        nc._request_with_retry('GET', 'https://example.com')
+        assert mock_sleep.call_args_list == [call(nc._BASE_DELAY * 1), call(nc._BASE_DELAY * 2)]
 
 
 # ── extract_page_id ───────────────────────────────────────────────────────────
