@@ -204,6 +204,13 @@ To-do checklist created in Marketing To-Do.
 Next: review drafts, then move to Ready.
 ```
 
+If any asset returned `"content_truncated": true`, add a note:
+
+```
+⚠️ Note: [Asset Name] — content exceeds 1,900 chars. Property field shows
+a preview; full text is in the page body.
+```
+
 ---
 
 ## Mode 2 — Asset Creation Mode

@@ -55,6 +55,7 @@ class TestCreateAsset:
         result = ca.create_asset(self.BASE_DATA)
         assert result['action'] == 'existing'
         assert result['asset_id'] == 'asset-id-existing'
+        assert result['content_truncated'] is False
 
     @patch('create_asset.find_existing_asset', return_value=None)
     @patch('create_asset.create_page', return_value=MOCK_CREATED_PAGE)
@@ -88,10 +89,18 @@ class TestCreateAsset:
     @patch('create_asset.DB_IDS', {'marketing_assets': 'real-db-id'})
     def test_content_truncated_at_1900_chars(self, mock_create, mock_find):
         data = {**self.BASE_DATA, 'content': 'x' * 2000}
-        ca.create_asset(data)
+        result = ca.create_asset(data)
         props = mock_create.call_args[0][1]
         content_val = props['Content']['rich_text'][0]['text']['content']
         assert len(content_val) == 1900
+        assert result['content_truncated'] is True
+
+    @patch('create_asset.find_existing_asset', return_value=None)
+    @patch('create_asset.create_page', return_value=MOCK_CREATED_PAGE)
+    @patch('create_asset.DB_IDS', {'marketing_assets': 'real-db-id'})
+    def test_content_not_truncated_when_short(self, mock_create, mock_find):
+        result = ca.create_asset(self.BASE_DATA)
+        assert result['content_truncated'] is False
 
     @patch('create_asset.find_existing_asset', return_value=None)
     @patch('create_asset.create_page', return_value=MOCK_CREATED_PAGE)

@@ -65,6 +65,7 @@ def create_asset(data: dict) -> dict:
             'asset_name': asset_name,
             'channel': extract_text(existing.get('properties', {}).get('Channel', {})),
             'type': extract_text(existing.get('properties', {}).get('Type', {})),
+            'content_truncated': False,
         }
 
     properties = {
@@ -78,10 +79,12 @@ def create_asset(data: dict) -> dict:
         properties['Hook / Angle'] = rich_text_prop(data['hook'])
 
     content = data.get('content', '')
+    content_truncated = False
     if content:
-        # Notion rich_text property limit: 2000 chars — truncate with note if needed
+        # Notion rich_text property limit: 2000 chars; full text is still written to page body below
         if len(content) > 1900:
             properties['Content'] = rich_text_prop(content[:1900])
+            content_truncated = True
         else:
             properties['Content'] = rich_text_prop(content)
 
@@ -122,6 +125,7 @@ def create_asset(data: dict) -> dict:
         'asset_name': asset_name,
         'channel': data.get('channel', ''),
         'type': data.get('type', 'Post'),
+        'content_truncated': content_truncated,
     }
 
 
