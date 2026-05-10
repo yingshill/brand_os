@@ -30,7 +30,7 @@ import json
 import os
 sys.path.insert(0, os.path.dirname(__file__))
 from notion_client import (
-    query_database, create_page, extract_text, DB_IDS,
+    query_database, create_page, extract_text, classify_error, DB_IDS,
     title_prop, rich_text_prop, select_prop, multi_select_prop, relation_prop, status_prop,
     heading_block, paragraph_block, divider_block, bookmark_block, text_to_blocks,
 )
@@ -135,5 +135,5 @@ if __name__ == '__main__':
         result = create_asset(data)
         print(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as e:
-        print(json.dumps({'error': str(e)}))
+        print(json.dumps({'error': str(e), 'kind': classify_error(e)}))
         sys.exit(1)

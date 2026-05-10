@@ -11,7 +11,7 @@ import sys
 import json
 import os
 sys.path.insert(0, os.path.dirname(__file__))
-from notion_client import get_page, update_page, select_prop
+from notion_client import get_page, update_page, select_prop, classify_error
 
 
 def update_entry_status(page_id: str, status: str) -> dict:
@@ -30,5 +30,5 @@ if __name__ == '__main__':
         result = update_entry_status(sys.argv[1], sys.argv[2])
         print(json.dumps(result))
     except Exception as e:
-        print(json.dumps({'error': str(e)}))
+        print(json.dumps({'error': str(e), 'kind': classify_error(e)}))
         sys.exit(1)

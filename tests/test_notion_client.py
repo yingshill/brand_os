@@ -93,6 +93,51 @@ class TestRetryLogic:
         assert mock_sleep.call_args_list == [call(nc._BASE_DELAY * 1), call(nc._BASE_DELAY * 2)]
 
 
+# ── classify_error ───────────────────────────────────────────────────────────
+
+class TestClassifyError:
+    def _http_error(self, status_code):
+        resp = MagicMock()
+        resp.status_code = status_code
+        err = requests.HTTPError(response=resp)
+        return err
+
+    def test_400_is_schema_error(self):
+        assert nc.classify_error(self._http_error(400)) == 'schema_error'
+
+    def test_401_is_auth_error(self):
+        assert nc.classify_error(self._http_error(401)) == 'auth_error'
+
+    def test_404_is_not_found(self):
+        assert nc.classify_error(self._http_error(404)) == 'not_found'
+
+    def test_429_is_rate_limit(self):
+        assert nc.classify_error(self._http_error(429)) == 'rate_limit'
+
+    def test_500_is_server_error(self):
+        assert nc.classify_error(self._http_error(500)) == 'server_error'
+
+    def test_503_is_server_error(self):
+        assert nc.classify_error(self._http_error(503)) == 'server_error'
+
+    def test_connection_error_is_network_error(self):
+        assert nc.classify_error(requests.ConnectionError()) == 'network_error'
+
+    def test_timeout_is_network_error(self):
+        assert nc.classify_error(requests.Timeout()) == 'network_error'
+
+    def test_json_decode_error_is_parse_error(self):
+        import json as _json
+        exc = _json.JSONDecodeError('bad', '', 0)
+        assert nc.classify_error(exc) == 'parse_error'
+
+    def test_value_error_is_config_error(self):
+        assert nc.classify_error(ValueError('NOTION_DB_X is not set')) == 'config_error'
+
+    def test_unknown_exception_is_unknown_error(self):
+        assert nc.classify_error(RuntimeError('something')) == 'unknown_error'
+
+
 # ── extract_page_id ───────────────────────────────────────────────────────────
 
 class TestExtractPageId:

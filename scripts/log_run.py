@@ -25,6 +25,8 @@ import json
 import os
 from datetime import datetime, timezone
 from pathlib import Path
+sys.path.insert(0, os.path.dirname(__file__))
+from notion_client import classify_error
 
 LOG_FILE = Path(__file__).parent.parent / 'logs' / 'runs.jsonl'
 
@@ -61,5 +63,5 @@ if __name__ == '__main__':
         result = log_run(data)
         print(json.dumps(result, indent=2))
     except Exception as e:
-        print(json.dumps({'error': str(e)}))
+        print(json.dumps({'error': str(e), 'kind': classify_error(e)}))
         sys.exit(1)

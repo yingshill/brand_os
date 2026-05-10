@@ -10,7 +10,7 @@ import sys
 import json
 import os
 sys.path.insert(0, os.path.dirname(__file__))
-from notion_client import extract_page_id, get_page, extract_text, DB_IDS
+from notion_client import extract_page_id, get_page, extract_text, classify_error, DB_IDS
 
 
 SOURCE_DBS = ['ai_daily_hits', 'github_trending', 'podcast_digest', 'course_digest']
@@ -65,5 +65,5 @@ if __name__ == '__main__':
         result = fetch_entry(sys.argv[1])
         print(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as e:
-        print(json.dumps({'error': str(e)}))
+        print(json.dumps({'error': str(e), 'kind': classify_error(e)}))
         sys.exit(1)

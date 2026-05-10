@@ -16,7 +16,7 @@ import json
 import os
 sys.path.insert(0, os.path.dirname(__file__))
 from notion_client import (
-    query_database, create_page, extract_text, DB_IDS,
+    query_database, create_page, extract_text, classify_error, DB_IDS,
     title_prop, rich_text_prop, select_prop,
 )
 
@@ -76,5 +76,5 @@ if __name__ == '__main__':
         result = create_project(data)
         print(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as e:
-        print(json.dumps({'error': str(e)}))
+        print(json.dumps({'error': str(e), 'kind': classify_error(e)}))
         sys.exit(1)

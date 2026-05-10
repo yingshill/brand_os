@@ -259,3 +259,30 @@ def text_to_blocks(text: str) -> list:
     for i in range(0, len(text), 1900):
         blocks.append(paragraph_block(text[i:i + 1900]))
     return blocks
+
+
+# ── Error classification ──────────────────────────────────────────────────────
+
+def classify_error(exc: Exception) -> str:
+    """Return a stable kind string for structured error output."""
+    if isinstance(exc, requests.HTTPError):
+        status = getattr(getattr(exc, 'response', None), 'status_code', 0)
+        if status == 400:
+            return 'schema_error'
+        if status == 401:
+            return 'auth_error'
+        if status == 404:
+            return 'not_found'
+        if status == 429:
+            return 'rate_limit'
+        if status >= 500:
+            return 'server_error'
+        return 'http_error'
+    if isinstance(exc, (requests.ConnectionError, requests.Timeout)):
+        return 'network_error'
+    # json.JSONDecodeError is a subclass of ValueError — check it first
+    if isinstance(exc, json.JSONDecodeError):
+        return 'parse_error'
+    if isinstance(exc, ValueError):
+        return 'config_error'
+    return 'unknown_error'
