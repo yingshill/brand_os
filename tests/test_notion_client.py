@@ -157,6 +157,45 @@ class TestCache:
         assert nc._cache_get("badkey") is None
 
 
+# ── update_page cache busting ─────────────────────────────────────────────────
+
+class TestUpdatePageCacheBusting:
+    def setup_method(self):
+        self.tmp = tempfile.mkdtemp()
+        self.patcher = patch.object(nc, '_CACHE_DIR', Path(self.tmp))
+        self.patcher.start()
+
+    def teardown_method(self):
+        self.patcher.stop()
+
+    @patch('notion_client._request_with_retry')
+    def test_busts_page_cache_only_when_no_parent_db(self, mock_req):
+        mock_req.return_value = MagicMock(status_code=200, json=lambda: {})
+        nc._cache_set('page_abc', {'data': 1})
+        nc.update_page('abc', {})
+        assert nc._cache_get('page_abc') is None
+
+    @patch('notion_client._request_with_retry')
+    def test_busts_db_cache_when_parent_db_id_provided(self, mock_req):
+        mock_req.return_value = MagicMock(status_code=200, json=lambda: {})
+        db_id = 'db123456789012345678901234567890'
+        nc._cache_set(f'db_{db_id}_abcd1234', {'results': []})
+        nc._cache_set(f'db_{db_id}_efgh5678', {'results': []})
+        nc._cache_set('page_abc', {'data': 1})
+        nc.update_page('abc', {}, parent_db_id=db_id)
+        assert nc._cache_get(f'db_{db_id}_abcd1234') is None
+        assert nc._cache_get(f'db_{db_id}_efgh5678') is None
+        assert nc._cache_get('page_abc') is None
+
+    @patch('notion_client._request_with_retry')
+    def test_does_not_bust_other_db_caches(self, mock_req):
+        mock_req.return_value = MagicMock(status_code=200, json=lambda: {})
+        other_db = 'other0000000000000000000000000000'
+        nc._cache_set(f'db_{other_db}_abcd1234', {'results': []})
+        nc.update_page('abc', {}, parent_db_id='db123456789012345678901234567890')
+        assert nc._cache_get(f'db_{other_db}_abcd1234') is not None
+
+
 # ── extract_text ──────────────────────────────────────────────────────────────
 
 class TestExtractText:

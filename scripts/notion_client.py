@@ -153,9 +153,12 @@ def create_page(parent_db_id: str, properties: dict, children: Optional[list] = 
     return r.json()
 
 
-def update_page(page_id: str, properties: dict) -> dict:
+def update_page(page_id: str, properties: dict, parent_db_id: Optional[str] = None) -> dict:
     r = _request_with_retry('PATCH', f"{BASE_URL}/pages/{page_id}", headers=HEADERS, json={'properties': properties})
     _cache_bust(f"page_{page_id}")
+    if parent_db_id:
+        for p in _CACHE_DIR.glob(f"db_{parent_db_id}_*.json"):
+            p.unlink(missing_ok=True)
     return r.json()
 
 
