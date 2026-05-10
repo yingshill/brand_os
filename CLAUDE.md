@@ -84,12 +84,18 @@ Generate content for all 4 default assets + any approved extras.
 
 **Always create these 4 — no approval needed:**
 
-| Asset | Channel | Notes |
-|---|---|---|
-| LinkedIn (PM) | LinkedIn | Hook for PMs / operators / AI builders. Under 1,300 chars. |
-| LinkedIn (DE) | LinkedIn | Hook for data engineers / ML engineers. Under 1,300 chars. |
-| XHS | XHS | Shorter, snappier. Chinese market. Include carousel brief. |
-| Notion Website | General | Cleaned republish of source entry. No new writing. |
+| Asset | Channel | `asset_name` (must use exactly) | Notes |
+|---|---|---|---|
+| LinkedIn (PM) | LinkedIn | `{project_title} — LinkedIn (PM)` | Hook for PMs / operators / AI builders. Under 1,300 chars. |
+| LinkedIn (DE) | LinkedIn | `{project_title} — LinkedIn (DE)` | Hook for data engineers / ML engineers. Under 1,300 chars. |
+| XHS | XHS | `{project_title} — XHS` | Shorter, snappier. Chinese market. Include carousel brief. |
+| Notion Website | General | `{project_title} — Notion Website` | Cleaned republish of source entry. No new writing. |
+
+**Asset naming rule — always follow this exactly:**
+- `asset_name` is derived from `{project_title} — {Channel} ({Audience})`, never a creative LLM-generated title
+- The creative hook goes in the `hook` field, not the name
+- This ensures dedup works: re-running the same project never creates duplicates
+- Extra channels: `{project_title} — X`, `{project_title} — Substack`, etc.
 
 **Content voice:**
 - Hook-first: open with a bold claim or surprising insight
@@ -113,10 +119,10 @@ For each asset, run:
 ```bash
 python scripts/create_asset.py <<'JSON'
 {
-  "asset_name": "How I use Claude to ship faster — PM angle",
+  "asset_name": "MCP is the new API — LinkedIn (PM)",
   "type": "Post",
   "channel": "LinkedIn",
-  "hook": "One-liner hook",
+  "hook": "One-liner hook (creative title goes here, not in asset_name)",
   "content": "Full post text with hashtags",
   "topic": ["Workflow", "AI Design"],
   "project_id": "<project_id from step 2>",

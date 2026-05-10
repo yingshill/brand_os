@@ -1,10 +1,17 @@
 """
 Create an asset row in the Marketing Asset Library.
 
+Asset names follow the deterministic convention:
+    "{project_title} — LinkedIn (PM)"
+    "{project_title} — LinkedIn (DE)"
+    "{project_title} — XHS"
+    "{project_title} — Notion Website"
+    "{project_title} — {Channel}"   ← extras
+
 Usage:
     python scripts/create_asset.py <<'JSON'
     {
-      "asset_name": "...",
+      "asset_name": "MCP is the new API — LinkedIn (PM)",
       "type": "Post | Carousel | Thread | Article | Case Study | Video",
       "channel": "LinkedIn | XHS | X | General | Substack | YouTube",
       "hook": "one-liner hook",
@@ -16,14 +23,14 @@ Usage:
     }
     JSON
 
-Output: JSON with asset_id, asset_url, asset_name.
+Output: JSON with asset_id, asset_url, asset_name, action (created | existing).
 """
 import sys
 import json
 import os
 sys.path.insert(0, os.path.dirname(__file__))
 from notion_client import (
-    create_page, DB_IDS,
+    query_database, create_page, extract_text, DB_IDS,
     title_prop, rich_text_prop, select_prop, multi_select_prop, relation_prop, status_prop,
     heading_block, paragraph_block, divider_block, bookmark_block, text_to_blocks,
 )
@@ -31,13 +38,37 @@ from notion_client import (
 CARD_CANVAS_URL = 'https://www.cardcanvas.app/'
 
 
+def find_existing_asset(asset_name: str) -> dict | None:
+    db_id = DB_IDS['marketing_assets']
+    if not db_id:
+        return None
+    pages = query_database(db_id, filter_obj={
+        'property': 'Asset Name',
+        'title': {'equals': asset_name},
+    })
+    return pages[0] if pages else None
+
+
 def create_asset(data: dict) -> dict:
     db_id = DB_IDS['marketing_assets']
     if not db_id:
         raise ValueError("NOTION_DB_MARKETING_ASSETS is not set in .env")
 
+    asset_name = data['asset_name']
+
+    existing = find_existing_asset(asset_name)
+    if existing:
+        return {
+            'action': 'existing',
+            'asset_id': existing['id'],
+            'asset_url': existing.get('url', ''),
+            'asset_name': asset_name,
+            'channel': extract_text(existing.get('properties', {}).get('Channel', {})),
+            'type': extract_text(existing.get('properties', {}).get('Type', {})),
+        }
+
     properties = {
-        'Asset Name': title_prop(data['asset_name']),
+        'Asset Name': title_prop(asset_name),
         'Type': select_prop(data.get('type', 'Post')),
         'Channel': select_prop(data.get('channel', 'LinkedIn')),
         'Status': status_prop('Draft'),
@@ -85,9 +116,10 @@ def create_asset(data: dict) -> dict:
     page = create_page(db_id, properties, children if children else None)
 
     return {
+        'action': 'created',
         'asset_id': page['id'],
         'asset_url': page.get('url', ''),
-        'asset_name': data['asset_name'],
+        'asset_name': asset_name,
         'channel': data.get('channel', ''),
         'type': data.get('type', 'Post'),
     }
