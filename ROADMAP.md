@@ -39,7 +39,7 @@
 | P3 | ~~**Retry logic** — exponential backoff on 429 + 5xx in `notion_client.py`~~ ✅ | `notion_client.py` | Critical |
 | P4 | ~~**Cache invalidation gap** — `update_page` must also bust `db_{parent_db_id}_*` caches, not just the page cache~~ ✅ | `notion_client.py`, `update_entry_status.py` | High |
 | P5 | ~~**Pagination** — `query_database` doesn't follow `has_more` cursor; silently misses results beyond 100 rows~~ ✅ | `notion_client.py` | High |
-| P6 | **Run audit log** — append `logs/runs.jsonl` per run (timestamp, project_id, asset_ids, todo_ids) | new `logs/` dir | High |
+| P6 | ~~**Run audit log** — append `logs/runs.jsonl` per run (timestamp, project_id, asset_ids, todo_ids)~~ ✅ | new `logs/` dir | High |
 | P7 | **Silent content truncation** — warn user when content is truncated in the Notion property field | `create_asset.py` | Medium |
 | P8 | **Error categorization** — distinguish 400 schema errors vs 429 rate limits vs network errors in script output | all scripts | Medium |
 | P9 | **Approval gate** — re-ask only the ambiguous answer instead of accepting a freeform 4-in-1 reply | `CLAUDE.md` | Medium |
