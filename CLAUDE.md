@@ -37,7 +37,9 @@ Wait for confirmation before proceeding.
 
 ### Step 2 — Create or find the Marketing Project
 ```bash
-python scripts/create_project.py '{"title": "...", "positioning": "..."}'
+python scripts/create_project.py <<'JSON'
+{"title": "...", "positioning": "..."}
+JSON
 ```
 - `positioning` = one sentence combining Core Insight + Why It Matters
 - Script searches Marketing Projects DB for an existing match first
@@ -109,11 +111,7 @@ Generate content for all 4 default assets + any approved extras.
 
 For each asset, run:
 ```bash
-python scripts/create_asset.py '<json>'
-```
-
-JSON shape:
-```json
+python scripts/create_asset.py <<'JSON'
 {
   "asset_name": "How I use Claude to ship faster — PM angle",
   "type": "Post",
@@ -128,6 +126,8 @@ JSON shape:
     {"title": "Slide 2 — ...", "content": "..."}
   ]
 }
+JSON
+```
 ```
 
 Collect asset IDs from each script output.
@@ -144,17 +144,15 @@ For each asset, determine task list by type:
 
 Run for each task:
 ```bash
-python scripts/create_todo.py '<json>'
-```
-
-JSON shape:
-```json
+python scripts/create_todo.py <<'JSON'
 {
   "task": "Review — [Asset Name]",
   "priority": "🔥 High",
   "channel": "LinkedIn",
   "asset_id": "<asset_id>"
 }
+JSON
+```
 ```
 
 For "Design carousel images" tasks, use `"priority": "🟡 Medium"`.
@@ -189,7 +187,9 @@ Next: review drafts, then move to Ready.
 2. Generate content drafts (LinkedIn always = 2 assets: PM + DE)
 3. Save each asset:
 ```bash
-python scripts/create_asset.py '<json>'
+python scripts/create_asset.py <<'JSON'
+{...}
+JSON
 ```
 4. Confirm: list each asset name, channel, type, status = Draft
 
@@ -203,7 +203,9 @@ python scripts/create_asset.py '<json>'
 2. Determine asset type to pick the right task list
 3. Create tasks:
 ```bash
-python scripts/create_todo.py '<json>'
+python scripts/create_todo.py <<'JSON'
+{...}
+JSON
 ```
 4. Confirm: "N tasks created for [Asset Name]"
 

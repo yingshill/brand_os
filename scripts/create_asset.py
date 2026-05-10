@@ -2,9 +2,7 @@
 Create an asset row in the Marketing Asset Library.
 
 Usage:
-    python scripts/create_asset.py '<json>'
-
-JSON input:
+    python scripts/create_asset.py <<'JSON'
     {
       "asset_name": "...",
       "type": "Post | Carousel | Thread | Article | Case Study | Video",
@@ -16,6 +14,7 @@ JSON input:
       "carousel_brief": "optional design brief text",
       "slides": [{"title": "Slide 1 — Hook", "content": "..."}]
     }
+    JSON
 
 Output: JSON with asset_id, asset_url, asset_name.
 """
@@ -95,11 +94,8 @@ def create_asset(data: dict) -> dict:
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print(json.dumps({'error': 'Provide JSON as argument'}))
-        sys.exit(1)
     try:
-        data = json.loads(sys.argv[1])
+        data = json.loads(sys.stdin.read())
         result = create_asset(data)
         print(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as e:

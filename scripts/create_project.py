@@ -2,13 +2,12 @@
 Create or find a Marketing Project in Notion.
 
 Usage:
-    python scripts/create_project.py '<json>'
-
-JSON input:
+    python scripts/create_project.py <<'JSON'
     {
       "title": "Project Title",
       "positioning": "One-sentence positioning statement"
     }
+    JSON
 
 Output: JSON with project_id, project_url, action (created | linked).
 """
@@ -72,11 +71,8 @@ def create_project(data: dict) -> dict:
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print(json.dumps({'error': 'Provide JSON as argument'}))
-        sys.exit(1)
     try:
-        data = json.loads(sys.argv[1])
+        data = json.loads(sys.stdin.read())
         result = create_project(data)
         print(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as e:

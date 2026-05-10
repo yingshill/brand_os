@@ -2,10 +2,14 @@
 Create task(s) in Marketing To-Do.
 
 Usage — single task:
-    python scripts/create_todo.py '<json>'
+    python scripts/create_todo.py <<'JSON'
+    {"task": "Review — Asset Name", "priority": "🔥 High", "channel": "LinkedIn", "asset_id": "..."}
+    JSON
 
 Usage — batch:
-    python scripts/create_todo.py '[<json>, <json>, ...]'
+    python scripts/create_todo.py <<'JSON'
+    [{"task": "Review — Asset A", ...}, {"task": "Publish — Asset A", ...}]
+    JSON
 
 JSON shape (single):
     {
@@ -54,11 +58,8 @@ def create_todo(data: dict) -> dict:
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print(json.dumps({'error': 'Provide JSON as argument'}))
-        sys.exit(1)
     try:
-        raw = json.loads(sys.argv[1])
+        raw = json.loads(sys.stdin.read())
         if isinstance(raw, list):
             result = [create_todo(item) for item in raw]
         else:
