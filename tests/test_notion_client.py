@@ -157,6 +157,63 @@ class TestCache:
         assert nc._cache_get("badkey") is None
 
 
+# ── query_database pagination ────────────────────────────────────────────────
+
+class TestQueryDatabasePagination:
+    def setup_method(self):
+        self.tmp = tempfile.mkdtemp()
+        self.patcher = patch.object(nc, '_CACHE_DIR', Path(self.tmp))
+        self.patcher.start()
+
+    def teardown_method(self):
+        self.patcher.stop()
+
+    def _mock_response(self, results, has_more=False, next_cursor=None):
+        r = MagicMock()
+        r.status_code = 200
+        r.raise_for_status.return_value = None
+        r.json.return_value = {'results': results, 'has_more': has_more, 'next_cursor': next_cursor}
+        return r
+
+    @patch('notion_client._request_with_retry')
+    def test_single_page_returns_all_results(self, mock_req):
+        mock_req.return_value = self._mock_response([{'id': 'a'}, {'id': 'b'}])
+        result = nc.query_database('db-id')
+        assert result == [{'id': 'a'}, {'id': 'b'}]
+        assert mock_req.call_count == 1
+
+    @patch('notion_client._request_with_retry')
+    def test_follows_pagination_cursor(self, mock_req):
+        mock_req.side_effect = [
+            self._mock_response([{'id': 'a'}, {'id': 'b'}], has_more=True, next_cursor='cursor-1'),
+            self._mock_response([{'id': 'c'}], has_more=False),
+        ]
+        result = nc.query_database('db-id')
+        assert result == [{'id': 'a'}, {'id': 'b'}, {'id': 'c'}]
+        assert mock_req.call_count == 2
+        # second call must include start_cursor
+        second_call_body = mock_req.call_args_list[1][1]['json']
+        assert second_call_body['start_cursor'] == 'cursor-1'
+
+    @patch('notion_client._request_with_retry')
+    def test_accumulates_three_pages(self, mock_req):
+        mock_req.side_effect = [
+            self._mock_response([{'id': str(i)} for i in range(100)], has_more=True, next_cursor='cur-1'),
+            self._mock_response([{'id': str(i)} for i in range(100, 200)], has_more=True, next_cursor='cur-2'),
+            self._mock_response([{'id': str(i)} for i in range(200, 250)], has_more=False),
+        ]
+        result = nc.query_database('db-id')
+        assert len(result) == 250
+        assert mock_req.call_count == 3
+
+    @patch('notion_client._request_with_retry')
+    def test_cache_hit_skips_api(self, mock_req):
+        mock_req.return_value = self._mock_response([{'id': 'x'}])
+        nc.query_database('db-id')
+        nc.query_database('db-id')
+        assert mock_req.call_count == 1  # second call served from cache
+
+
 # ── update_page cache busting ─────────────────────────────────────────────────
 
 class TestUpdatePageCacheBusting:

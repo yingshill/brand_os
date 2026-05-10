@@ -136,10 +136,23 @@ def query_database(db_id: str, filter_obj: Optional[dict] = None, sorts: Optiona
     cached = _cache_get(key)
     if cached is not None:
         return cached
-    r = _request_with_retry('POST', f"{BASE_URL}/databases/{db_id}/query", headers=HEADERS, json=body)
-    result = r.json().get('results', [])
-    _cache_set(key, result)
-    return result
+
+    results = []
+    cursor = None
+    while True:
+        page_body = dict(body)
+        if cursor:
+            page_body['start_cursor'] = cursor
+        r = _request_with_retry('POST', f"{BASE_URL}/databases/{db_id}/query", headers=HEADERS, json=page_body)
+        data = r.json()
+        results.extend(data.get('results', []))
+        if data.get('has_more') and data.get('next_cursor'):
+            cursor = data['next_cursor']
+        else:
+            break
+
+    _cache_set(key, results)
+    return results
 
 
 def create_page(parent_db_id: str, properties: dict, children: Optional[list] = None) -> dict:
