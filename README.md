@@ -6,7 +6,11 @@
 [![Notion API](https://img.shields.io/badge/Notion-API%20v1-black?logo=notion)](https://developers.notion.com/)
 [![Tests](https://img.shields.io/badge/tests-62%20passing-brightgreen)]()
 
-A Claude Code agent that turns Notion source entries into platform-ready content. Paste a Notion URL → the agent fetches the entry, asks for your hook and timeline, drafts 5 assets across LinkedIn, RedNote, X, and Notion Publish, then saves everything — assets and linked to-dos — to Notion via the API.
+Good ideas don't become content by themselves. There's a gap between capturing an insight and publishing it — and that gap is filled with repetitive work: drafting angles, reformatting per platform, creating tasks, linking everything in your workspace.
+
+**Signal to Asset** closes that gap with an agentic workflow. It reads a source entry from your Notion knowledge base — an article, a course note, a GitHub repo, a podcast insight — extracts the core signal, and runs an end-to-end content pipeline: marketing plan → 5 platform-ready drafts → linked publish tasks, all written and saved automatically.
+
+The result lands directly in your Notion workspace: a Marketing Project tied to the source, five draft assets across LinkedIn, RedNote, X, and Notion Publish, and a ready-to-action to-do checklist. You review, refine, and publish. The pipeline handles everything else.
 
 > **Owner:** Yingshi Liu · **Runtime:** Claude Code · **Integration:** Notion API v1
 
