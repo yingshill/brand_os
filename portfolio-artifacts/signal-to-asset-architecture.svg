@@ -1,0 +1,35 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="900" fill="#F6F7FB"/>
+  <rect x="88" y="72" width="1424" height="756" rx="24" fill="#FFFFFF" stroke="#D8DEE9" stroke-width="2"/>
+  <rect x="128" y="112" width="1344" height="180" rx="18" fill="#111827"/>
+  <text x="168" y="164" fill="#9CA3AF" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" letter-spacing="2">ARCHITECTURE / SIGNAL TO ASSET</text>
+  <text x="168" y="232" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="60" font-weight="800">Notion signal to approved assets</text>
+  <text x="168" y="276" fill="#CBD5E1" font-family="Arial, Helvetica, sans-serif" font-size="27">A Claude Code workflow turns one source entry into channel-specific drafts and linked tasks.</text>
+  <rect x="128" y="360" width="312" height="172" rx="18" fill="#FFFFFF" stroke="#D8DEE9" stroke-width="2"/>
+  <text x="168" y="416" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="800">Source entry</text>
+  <text x="168" y="466" fill="#4B5563" font-family="Arial, Helvetica, sans-serif" font-size="24">Title, insight, source URL,</text>
+  <text x="168" y="500" fill="#4B5563" font-family="Arial, Helvetica, sans-serif" font-size="24">audience, and project tag.</text>
+  <rect x="536" y="360" width="392" height="172" rx="18" fill="#FFFFFF" stroke="#D8DEE9" stroke-width="2"/>
+  <rect x="536" y="360" width="8" height="172" rx="4" fill="#2563EB"/>
+  <text x="576" y="416" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="800">Claude Code agent</text>
+  <text x="576" y="466" fill="#4B5563" font-family="Arial, Helvetica, sans-serif" font-size="24">Fetches context, drafts posts,</text>
+  <text x="576" y="500" fill="#4B5563" font-family="Arial, Helvetica, sans-serif" font-size="24">and enforces approval gating.</text>
+  <rect x="1024" y="360" width="448" height="172" rx="18" fill="#F0FDF4" stroke="#BBF7D0" stroke-width="2"/>
+  <rect x="1024" y="360" width="8" height="172" rx="4" fill="#16A34A"/>
+  <text x="1064" y="416" fill="#14532D" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="800">Notion writeback</text>
+  <text x="1064" y="466" fill="#166534" font-family="Arial, Helvetica, sans-serif" font-size="24">Marketing assets, project links,</text>
+  <text x="1064" y="500" fill="#166534" font-family="Arial, Helvetica, sans-serif" font-size="24">and review or publish tasks.</text>
+  <path d="M464 446H512" stroke="#94A3B8" stroke-width="6" stroke-linecap="round"/>
+  <path d="M500 430L516 446L500 462" stroke="#94A3B8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M952 446H1000" stroke="#94A3B8" stroke-width="6" stroke-linecap="round"/>
+  <path d="M988 430L1004 446L988 462" stroke="#94A3B8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="128" y="620" width="422" height="128" rx="18" fill="#F8FAFC" stroke="#D8DEE9" stroke-width="2"/>
+  <text x="168" y="682" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="800">5 channel drafts</text>
+  <text x="168" y="722" fill="#64748B" font-family="Arial, Helvetica, sans-serif" font-size="23">LinkedIn, RedNote, X, and Notion.</text>
+  <rect x="590" y="620" width="422" height="128" rx="18" fill="#F8FAFC" stroke="#D8DEE9" stroke-width="2"/>
+  <text x="630" y="682" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="800">Human review</text>
+  <text x="630" y="722" fill="#64748B" font-family="Arial, Helvetica, sans-serif" font-size="23">The agent drafts, but never publishes.</text>
+  <rect x="1052" y="620" width="420" height="128" rx="18" fill="#ECFDF5" stroke="#BBF7D0" stroke-width="2"/>
+  <text x="1092" y="682" fill="#14532D" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="800">Ops-ready output</text>
+  <text x="1092" y="722" fill="#166534" font-family="Arial, Helvetica, sans-serif" font-size="23">Every draft has owner-ready tasks.</text>
+</svg>

@@ -1,0 +1,39 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="900" fill="#F6F7FB"/>
+  <rect x="88" y="72" width="1424" height="756" rx="24" fill="#FFFFFF" stroke="#D8DEE9" stroke-width="2"/>
+  <rect x="128" y="112" width="1344" height="168" rx="18" fill="#111827"/>
+  <text x="168" y="164" fill="#9CA3AF" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" letter-spacing="2">CODE CAROUSEL / SIGNAL TO ASSET</text>
+  <text x="168" y="232" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="58" font-weight="800">Eight panels for the agent workflow</text>
+  <rect x="128" y="332" width="290" height="160" rx="18" fill="#F8FAFC" stroke="#D8DEE9" stroke-width="2"/>
+  <text x="168" y="382" fill="#2563EB" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="800">01 COVER</text>
+  <text x="168" y="430" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="800">1 URL. 5 posts.</text>
+  <text x="168" y="466" fill="#64748B" font-family="Arial, Helvetica, sans-serif" font-size="22">The promise in one frame.</text>
+  <rect x="458" y="332" width="290" height="160" rx="18" fill="#F8FAFC" stroke="#D8DEE9" stroke-width="2"/>
+  <text x="498" y="382" fill="#B91C1C" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="800">02 PROBLEM</text>
+  <text x="498" y="430" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="800">Manual repackaging</text>
+  <text x="498" y="466" fill="#64748B" font-family="Arial, Helvetica, sans-serif" font-size="22">Every channel repeats work.</text>
+  <rect x="788" y="332" width="290" height="160" rx="18" fill="#F8FAFC" stroke="#D8DEE9" stroke-width="2"/>
+  <text x="828" y="382" fill="#2563EB" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="800">03 SYSTEM</text>
+  <text x="828" y="430" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="800">Fetch to draft</text>
+  <text x="828" y="466" fill="#64748B" font-family="Arial, Helvetica, sans-serif" font-size="22">Notion data becomes inputs.</text>
+  <rect x="1118" y="332" width="354" height="160" rx="18" fill="#F8FAFC" stroke="#D8DEE9" stroke-width="2"/>
+  <text x="1158" y="382" fill="#2563EB" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="800">04 FETCH</text>
+  <text x="1158" y="430" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="800">Structured source</text>
+  <text x="1158" y="466" fill="#64748B" font-family="Arial, Helvetica, sans-serif" font-size="22">Title, insight, why it matters.</text>
+  <rect x="128" y="548" width="290" height="160" rx="18" fill="#F8FAFC" stroke="#D8DEE9" stroke-width="2"/>
+  <text x="168" y="598" fill="#2563EB" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="800">05 DRAFT</text>
+  <text x="168" y="646" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="800">Audience variants</text>
+  <text x="168" y="682" fill="#64748B" font-family="Arial, Helvetica, sans-serif" font-size="22">PM, DE, RedNote, X.</text>
+  <rect x="458" y="548" width="290" height="160" rx="18" fill="#F8FAFC" stroke="#D8DEE9" stroke-width="2"/>
+  <text x="498" y="598" fill="#2563EB" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="800">06 SAVE</text>
+  <text x="498" y="646" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="800">Assets plus tasks</text>
+  <text x="498" y="682" fill="#64748B" font-family="Arial, Helvetica, sans-serif" font-size="22">Notion writeback stays linked.</text>
+  <rect x="788" y="548" width="290" height="160" rx="18" fill="#ECFDF5" stroke="#BBF7D0" stroke-width="2"/>
+  <text x="828" y="598" fill="#15803D" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="800">07 RESULT</text>
+  <text x="828" y="646" fill="#14532D" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="800">Review in minutes</text>
+  <text x="828" y="682" fill="#166534" font-family="Arial, Helvetica, sans-serif" font-size="22">Zero manual formatting.</text>
+  <rect x="1118" y="548" width="354" height="160" rx="18" fill="#ECFDF5" stroke="#BBF7D0" stroke-width="2"/>
+  <text x="1158" y="598" fill="#15803D" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="800">08 OPEN SOURCE</text>
+  <text x="1158" y="646" fill="#14532D" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="800">CLI-first agent</text>
+  <text x="1158" y="682" fill="#166534" font-family="Arial, Helvetica, sans-serif" font-size="22">Python, Claude Code, Notion.</text>
+</svg>
