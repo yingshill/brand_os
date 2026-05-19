@@ -3,8 +3,8 @@ Human eval script — score agent output after a Project Mode run.
 Run after each session until the agent is production-ready.
 
 Usage:
-    python scripts/eval_run.py                        # picks most recent project
-    python scripts/eval_run.py "https://notion.so/..."  # specific project URL
+    python scripts/eval_run.py [--brand brand_name]Pick most recent project for brand.
+    python scripts/eval_run.py "https://notion.so/..." [--brand brand_name]
 
 Scores saved to: .eval/<date>-<project-slug>.json
 """
@@ -12,13 +12,22 @@ import sys
 import json
 import os
 import re
+import argparse
 from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(__file__))
 from notion_client import (
-    DB_IDS, query_database, extract_page_id, extract_text,
+    DB_IDS, query_database, extract_page_id, extract_text, set_brand
 )
+
+parser = argparse.ArgumentParser(add_help=False)
+parser.add_argument('--brand', default='default')
+parser.add_argument('url', nargs='?', default='')
+args, _ = parser.parse_known_args()
+
+# Set brand context early
+set_brand(args.brand)
 
 EVAL_DIR = Path(__file__).parent.parent / '.eval'
 EVAL_DIR.mkdir(exist_ok=True)
@@ -48,6 +57,7 @@ def prompt_text(label):
 
 
 def find_recent_project():
+    from notion_client import DB_IDS
     rows = query_database(DB_IDS['marketing_projects'])
     if not rows:
         return None
@@ -57,6 +67,7 @@ def find_recent_project():
 
 
 def fetch_project_assets(project_id):
+    from notion_client import DB_IDS
     rows = query_database(DB_IDS['marketing_assets'])
     return [r for r in rows if any(
         rel.get('id', '').replace('-', '') == project_id.replace('-', '')
@@ -66,19 +77,20 @@ def fetch_project_assets(project_id):
 
 # ── Resolve project ───────────────────────────────────────────────────────────
 
-print("\n── Eval: Creative Content Manager Agent ──\n")
+print(f"\n── Eval: Creative Content Manager Agent (Brand: {args.brand}) ──\n")
 
 project = None
-if len(sys.argv) > 1 and sys.argv[1].startswith('http'):
+if args.url and args.url.startswith('http'):
     try:
-        pid = extract_page_id(sys.argv[1])
+        pid = extract_page_id(args.url)
+        from notion_client import DB_IDS
         rows = query_database(DB_IDS['marketing_projects'])
         for r in rows:
             if r['id'].replace('-', '') == pid.replace('-', ''):
                 project = r
                 break
         if not project:
-            print(f"Project not found for URL: {sys.argv[1]}")
+            print(f"Project not found for URL: {args.url}")
             sys.exit(1)
     except Exception as e:
         print(f"Error resolving project URL: {e}")
@@ -86,7 +98,7 @@ if len(sys.argv) > 1 and sys.argv[1].startswith('http'):
 else:
     project = find_recent_project()
     if not project:
-        print("No projects found in Marketing Projects DB.")
+        print(f"No projects found in Marketing Projects DB for brand '{args.brand}'.")
         sys.exit(1)
 
 project_id = project['id']
@@ -162,9 +174,10 @@ run_scores = {k: v for k, v in run_scores.items() if v is not None}
 # ── Save ─────────────────────────────────────────────────────────────────────
 
 date_str = datetime.now().strftime('%Y-%m-%d-%H%M')
-filename = f"{date_str}-{slugify(project_title)}.json"
+filename = f"{date_str}-{args.brand}-{slugify(project_title)}.json"
 output = {
     'date':          datetime.now().isoformat(),
+    'brand':         args.brand,
     'project_id':    project_id,
     'project_title': project_title,
     'project_url':   project.get('url', ''),

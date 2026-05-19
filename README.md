@@ -1,4 +1,4 @@
-# Signal to Asset — Creative Content Manager
+# Brand OS — Creative Content Manager
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/)
@@ -8,11 +8,11 @@
 
 Good ideas don't become content by themselves. There's a gap between capturing an insight and publishing it — and that gap is filled with repetitive work: drafting angles, reformatting per platform, creating tasks, linking everything in your workspace.
 
-**Signal to Asset** closes that gap with an agentic workflow. It reads a source entry from your Notion knowledge base — an article, a course note, a GitHub repo, a podcast insight — extracts the core signal, and runs an end-to-end content pipeline: marketing plan → 5 platform-ready drafts → linked publish tasks, all written and saved automatically.
+**Brand OS** closes that gap with an agentic workflow. It reads a source entry from your Notion knowledge base — an article, a course note, a GitHub repo, a podcast insight — extracts the core signal, and runs an end-to-end content pipeline: marketing plan → 5 platform-ready drafts → linked publish tasks, all written and saved automatically.
 
 The result lands directly in your Notion workspace: a Marketing Project tied to the source, five draft assets across LinkedIn, RedNote, X, and Notion Publish, and a ready-to-action to-do checklist. You review, refine, and publish. The pipeline handles everything else.
 
-> **Owner:** Yingshi Liu · **Runtime:** Claude Code · **Integration:** Notion API v1
+> **Owner:** Yingshi Liu · **Runtime:** Claude Code · **Multi-Brand OS**
 
 ---
 
@@ -20,18 +20,27 @@ The result lands directly in your Notion workspace: a Marketing Project tied to 
 
 ```mermaid
 graph TD
-    A["AI Daily Hits"] --> URL
-    B["GitHub Daily Trending"] --> URL
-    C["Podcast & Video Digest"] --> URL
-    D["Course Digest"] --> URL
-    URL["Paste Notion URL into Claude Code"] --> MM["Creative Content Manager Agent"]
-    MM --> P["Marketing Projects"]
-    MM --> AL["Marketing Asset Library"]
-    MM --> TD["Marketing To-Do"]
-    style MM fill:#dbeafe,color:#1e3a5f,stroke:#2d6fca
+    A["Source Entry (Notion)"] --> URL
+    URL["Paste URL into Claude Code"] --> MM["Creative Content Manager Agent"]
+    MM --> DNA["Brand DNA & Style Check"]
+    DNA --> VG["AI Visual Generation (DALL-E 3)"]
+    VG --> P["Notion Marketing Projects"]
+    P --> AL["Marketing Asset Library"]
+    AL --> AN["Analytics Feedback Loop"]
 ```
 
-**Trigger:** paste any source entry URL into Claude Code. The agent handles fetch → draft → approval gate → save.
+**Trigger:** paste any source entry URL into Claude Code.
+
+---
+
+## 🏗️ Multi-Brand Infrastructure
+
+The system now supports managing multiple businesses:
+- **`brands/`**: Independent DNA, configurations, and visual styles per business.
+- **Auto-Detection**: Automatic brand identification based on Notion source URL.
+- **Analytics Sync**: Push real engagement data back into Notion.
+
+See the [**Operations Guide**](OPERATIONS_GUIDE.md) for how to run the growth engine as a one-person founder.
 
 ---
 
@@ -68,17 +77,17 @@ Extra channels (Substack, YouTube, etc.) require explicit user approval per run.
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/yingshill/signal-to-asset.git
-cd signal-to-asset
+git clone https://github.com/yingshill/brand_os.git
+cd brand_os
 pip3 install -r requirements.txt
 ```
 
 ### 2. Create a Notion integration
 
 1. Go to [notion.so/my-integrations](https://www.notion.so/my-integrations) → **New integration**
-2. Name it `signal-to-asset`, set capabilities to Read + Write
+2. Name it `brand_os`, set capabilities to Read + Write
 3. Copy the **Internal Integration Secret** → paste as `NOTION_TOKEN` in `.env`
-4. Open each database in Notion → `...` → **Connections** → add `signal-to-asset`
+4. Open each database in Notion → `...` → **Connections** → add `brand_os`
 
 ### 3. Fill in `.env`
 
@@ -120,7 +129,7 @@ Claude Code reads `CLAUDE.md` and activates as the Creative Content Manager. Pas
 ## Repo structure
 
 ```
-signal-to-asset/
+brand_os/
 ├── CLAUDE.md                       ← agent instructions (loaded automatically by Claude Code)
 ├── ROADMAP.md                      ← milestones, backlog, artifact tracker
 ├── DECISIONS.md                    ← architecture and design decision log

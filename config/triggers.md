@@ -41,7 +41,7 @@ Filter:
 - `Done This Week` checkbox = true **AND**
 - `Output` contains `🎨 Visualize`
 
-This watches for the Brain Agent's signal but the Marketing Manager does not write — it's read-only context for understanding the publishing pipeline.
+This watches for the Brain Agent's signal but the Creative Content Manager does not write — it's read-only context for understanding the publishing pipeline.
 
 ## Trigger 5 — Project Mode entry point
 

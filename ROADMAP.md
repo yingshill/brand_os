@@ -1,4 +1,4 @@
-# Roadmap — Signal to Asset
+# Roadmap — Brand OS
 
 | Symbol | Meaning |
 |---|---|
@@ -28,7 +28,9 @@
 
 ### Features
 
-- 🔲 Connect **Marketing Projects** DB to integration in Notion (`...` → Connections → signal-to-asset), then run `test_run.py` to confirm 13/13
+- 🔲 Connect **Marketing Projects** DB to integration in Notion (`...` → Connections → brand_os), then run `test_run.py` to confirm 13/13
+- 🔲 **Review asset generation model** — Evaluate DALL-E 3 vs Flux.1 vs Video (Runway/Luma) for production-grade output.
+- 🔲 **Review Operations Guide** — Validate the human-in-the-loop workflow during end-to-end testing.
 
 ### Production hardening
 
@@ -67,7 +69,7 @@
 - [ ] Portfolio website — hero section
 - [ ] LinkedIn — "I built an agent that does X" launch post
 - [ ] GitHub profile README — GIF embed
-- [ ] signal-to-asset README — replace mermaid diagram
+- [ ] brand_os README — replace mermaid diagram
 
 **Decisions before recording:**
 - [ ] Narration or silent + captions?

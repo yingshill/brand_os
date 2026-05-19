@@ -23,4 +23,4 @@ The agent has a single Notion integration with the following access matrix.
 
 ## Why view-only on the source DBs
 
-The Marketing Manager **reads** source entries to build assets but does not modify them — except setting `Status = In Progress` when `📣 Project` is set. Course Digest is currently `Edit` because it's the only source DB with the `Project` relation column maintained by this agent. As other source DBs gain the column, their access widens.
+The Creative Content Manager **reads** source entries to build assets but does not modify them — except setting `Status = In Progress` when `📣 Project` is set. Course Digest is currently `Edit` because it's the only source DB with the `Project` relation column maintained by this agent. As other source DBs gain the column, their access widens.

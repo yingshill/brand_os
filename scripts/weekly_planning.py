@@ -2,25 +2,27 @@
 Weekly Planning Mode — surface top 3 ready assets and create publish tasks.
 
 Usage:
-    python scripts/weekly_planning.py
+    python scripts/weekly_planning.py [--brand brand_name]
 
 Output: JSON summary of assets surfaced and tasks created.
 """
 import sys
 import json
 import os
+import argparse
 from datetime import datetime, timedelta
 sys.path.insert(0, os.path.dirname(__file__))
 from notion_client import (
     query_database, create_page, extract_text, DB_IDS,
-    title_prop, select_prop, relation_prop,
+    title_prop, select_prop, relation_prop, set_brand
 )
 
 
 def get_ready_assets() -> list:
+    from notion_client import DB_IDS
     db_id = DB_IDS['marketing_assets']
     if not db_id:
-        raise ValueError("NOTION_DB_MARKETING_ASSETS is not set in .env")
+        raise ValueError("NOTION_DB_MARKETING_ASSETS is not set in config/env")
 
     pages = query_database(
         db_id,
@@ -43,6 +45,7 @@ def get_ready_assets() -> list:
 
 
 def publish_task_exists(asset_id: str) -> bool:
+    from notion_client import DB_IDS
     db_id = DB_IDS['marketing_todos']
     if not db_id:
         return False
@@ -59,16 +62,19 @@ def publish_task_exists(asset_id: str) -> bool:
     return False
 
 
-def run() -> dict:
+def run(brand: str = 'default') -> dict:
+    set_brand(brand)
+    
     assets = get_ready_assets()
     top3 = assets[:3]
 
     if not top3:
-        return {'assets': [], 'tasks_created': 0, 'message': 'No Ready assets found.'}
+        return {'brand': brand, 'assets': [], 'tasks_created': 0, 'message': 'No Ready assets found.'}
 
+    from notion_client import DB_IDS
     db_id = DB_IDS['marketing_todos']
     if not db_id:
-        raise ValueError("NOTION_DB_MARKETING_TODOS is not set in .env")
+        raise ValueError("NOTION_DB_MARKETING_TODOS is not set in config/env")
 
     created = []
     skipped = []
@@ -100,6 +106,7 @@ def run() -> dict:
     week_label = f"{today.strftime('%b %d')}–{week_end.strftime('%b %d, %Y')}"
 
     return {
+        'brand': brand,
         'week': week_label,
         'tasks_created': len(created),
         'tasks_skipped': skipped,
@@ -109,8 +116,12 @@ def run() -> dict:
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--brand', default='default')
+    args = parser.parse_args()
+    
     try:
-        result = run()
+        result = run(args.brand)
         print(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as e:
         print(json.dumps({'error': str(e)}))

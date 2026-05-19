@@ -32,7 +32,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from notion_client import (
     query_database, create_page, extract_text, classify_error, DB_IDS,
     title_prop, rich_text_prop, select_prop, multi_select_prop, relation_prop, status_prop,
-    heading_block, paragraph_block, divider_block, bookmark_block, text_to_blocks,
+    heading_block, paragraph_block, divider_block, bookmark_block, image_block, text_to_blocks,
 )
 
 CARD_CANVAS_URL = 'https://www.cardcanvas.app/'
@@ -52,7 +52,7 @@ def find_existing_asset(asset_name: str) -> dict | None:
 def create_asset(data: dict) -> dict:
     db_id = DB_IDS['marketing_assets']
     if not db_id:
-        raise ValueError("NOTION_DB_MARKETING_ASSETS is not set in .env")
+        raise ValueError("NOTION_DB_MARKETING_ASSETS is not set in config/env")
 
     asset_name = data['asset_name']
 
@@ -98,6 +98,11 @@ def create_asset(data: dict) -> dict:
     # Build page body blocks
     children = []
 
+    if data.get('image_url'):
+        children.append(heading_block('AI Generated Visual', 2))
+        children.append(image_block(data['image_url'], caption=data.get('hook')))
+        children.append(divider_block())
+
     if content:
         children.append(heading_block('Content', 2))
         children.extend(text_to_blocks(content))
@@ -132,8 +137,13 @@ def create_asset(data: dict) -> dict:
 if __name__ == '__main__':
     try:
         data = json.loads(sys.stdin.read())
+        brand = data.get('brand', 'default')
+        from notion_client import set_brand
+        set_brand(brand)
+        
         result = create_asset(data)
         print(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as e:
+        from notion_client import classify_error
         print(json.dumps({'error': str(e), 'kind': classify_error(e)}))
         sys.exit(1)

@@ -72,20 +72,73 @@ def _cache_set(key: str, payload) -> None:
 def _cache_bust(key: str) -> None:
     _cache_path(key).unlink(missing_ok=True)
 
-DB_IDS = {
-    'ai_daily_hits':        os.environ.get('NOTION_DB_AI_DAILY_HITS', ''),
-    'github_trending':      os.environ.get('NOTION_DB_GITHUB_TRENDING', ''),
-    'podcast_digest':       os.environ.get('NOTION_DB_PODCAST_DIGEST', ''),
-    'course_digest':        os.environ.get('NOTION_DB_COURSE_DIGEST', ''),
-    'marketing_projects':   os.environ.get('NOTION_DB_MARKETING_PROJECTS', ''),
-    'marketing_assets':     os.environ.get('NOTION_DB_MARKETING_ASSETS', ''),
-    'marketing_todos':      os.environ.get('NOTION_DB_MARKETING_TODOS', ''),
-}
+# ── Brand Management ──────────────────────────────────────────────────────────
 
-PAGE_IDS = {
-    'marketing_plan_template': os.environ.get('NOTION_PAGE_MARKETING_PLAN_TEMPLATE', ''),
-    'ai_command_center':       os.environ.get('NOTION_PAGE_AI_COMMAND_CENTER', ''),
-}
+def list_brands() -> list:
+    """List all directories in brands/."""
+    brands_dir = Path(__file__).parent.parent / 'brands'
+    if not brands_dir.exists():
+        return ['default']
+    return [d.name for d in brands_dir.iterdir() if d.is_dir()]
+
+
+def load_brand_config(brand_name: str = 'default') -> dict:
+    """Load brand-specific database and page IDs."""
+    brand_path = Path(__file__).parent.parent / 'brands' / brand_name / 'config.json'
+    if brand_path.exists():
+        with open(brand_path) as f:
+            config = json.load(f)
+            return config.get('notion', {})
+    
+    # Fallback to .env for legacy support
+    return {
+        'db_ids': {
+            'ai_daily_hits':        os.environ.get('NOTION_DB_AI_DAILY_HITS', ''),
+            'github_trending':      os.environ.get('NOTION_DB_GITHUB_TRENDING', ''),
+            'podcast_digest':       os.environ.get('NOTION_DB_PODCAST_DIGEST', ''),
+            'course_digest':        os.environ.get('NOTION_DB_COURSE_DIGEST', ''),
+            'marketing_projects':   os.environ.get('NOTION_DB_MARKETING_PROJECTS', ''),
+            'marketing_assets':     os.environ.get('NOTION_DB_MARKETING_ASSETS', ''),
+            'marketing_todos':      os.environ.get('NOTION_DB_MARKETING_TODOS', ''),
+        },
+        'page_ids': {
+            'marketing_plan_template': os.environ.get('NOTION_PAGE_MARKETING_PLAN_TEMPLATE', ''),
+            'ai_command_center':       os.environ.get('NOTION_PAGE_AI_COMMAND_CENTER', ''),
+        }
+    }
+
+
+def load_brand_style(brand_name: str = 'default') -> dict:
+    """Load brand-specific visual identity settings."""
+    style_path = Path(__file__).parent.parent / 'brands' / brand_name / 'STYLE.json'
+    if style_path.exists():
+        with open(style_path) as f:
+            return json.load(f)
+    return {}
+
+
+def find_brand_by_db(db_id: str) -> Optional[str]:
+    """Search all brands for one that contains this database ID."""
+    db_id_clean = db_id.replace('-', '')
+    for brand in list_brands():
+        config = load_brand_config(brand)
+        for val in config.get('db_ids', {}).values():
+            if val.replace('-', '') == db_id_clean:
+                return brand
+    return None
+
+# Default global IDs (can be overridden by scripts)
+_CURRENT_CONFIG = load_brand_config()
+DB_IDS = _CURRENT_CONFIG['db_ids']
+PAGE_IDS = _CURRENT_CONFIG['page_ids']
+
+def set_brand(brand_name: str):
+    """Override global DB_IDS and PAGE_IDS for the current process."""
+    config = load_brand_config(brand_name)
+    DB_IDS.clear()
+    DB_IDS.update(config['db_ids'])
+    PAGE_IDS.clear()
+    PAGE_IDS.update(config['page_ids'])
 
 
 def extract_page_id(url: str) -> str:
@@ -234,6 +287,43 @@ def status_prop(name: str) -> dict:
     return {'status': {'name': name}}
 
 
+def number_prop(value: float) -> dict:
+    return {'number': value}
+
+
+# ── Analytics & Discovery ─────────────────────────────────────────────────────
+
+def fetch_assets_for_analytics(brand_name: str = 'default', limit: int = 10) -> list:
+    """Fetch recent published assets to sync analytics."""
+    set_brand(brand_name)
+    db_id = DB_IDS['marketing_assets']
+    if not db_id:
+        return []
+    
+    # Filter for Published or Ready status
+    filter_obj = {
+        "or": [
+            {"property": "Status", "status": {"equals": "Published"}},
+            {"property": "Status", "status": {"equals": "Ready"}}
+        ]
+    }
+    
+    sorts = [{"timestamp": "created_time", "direction": "descending"}]
+    
+    pages = query_database(db_id, filter_obj=filter_obj, sorts=sorts)
+    
+    assets = []
+    for page in pages[:limit]:
+        props = page.get('properties', {})
+        assets.append({
+            'id': page['id'],
+            'name': extract_text(props.get('Asset Name') or props.get('Name') or {}),
+            'channel': extract_text(props.get('Channel') or {}),
+            'url': page.get('url', '')
+        })
+    return assets
+
+
 # ── Block helpers ─────────────────────────────────────────────────────────────
 
 def paragraph_block(text: str) -> dict:
@@ -251,6 +341,21 @@ def divider_block() -> dict:
 
 def bookmark_block(url: str) -> dict:
     return {'object': 'block', 'type': 'bookmark', 'bookmark': {'url': url}}
+
+
+def image_block(url: str, caption: Optional[str] = None) -> dict:
+    """Create an image block from an external URL."""
+    block = {
+        'object': 'block',
+        'type': 'image',
+        'image': {
+            'type': 'external',
+            'external': {'url': url}
+        }
+    }
+    if caption:
+        block['image']['caption'] = rich_text(caption)
+    return block
 
 
 def text_to_blocks(text: str) -> list:

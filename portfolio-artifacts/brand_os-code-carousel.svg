@@ -4,7 +4,7 @@
   <rect width="960" height="694" fill="#ffffff"/>
 
   <!-- Header -->
-  <text x="480" y="32" font-size="13" font-weight="700" fill="#1A2030" text-anchor="middle">Signal to Asset — Code Walkthrough</text>
+  <text x="480" y="32" font-size="13" font-weight="700" fill="#1A2030" text-anchor="middle">Brand OS — Code Walkthrough</text>
   <text x="480" y="50" font-size="9" fill="#787774" text-anchor="middle" letter-spacing="1.5">PORTFOLIO ARTIFACT · NOTION LIGHT · 2026-05</text>
   <line x1="42" y1="62" x2="918" y2="62" stroke="#e9e9e7" stroke-width="1"/>
 
@@ -23,7 +23,7 @@
   <text x="147" y="214" font-size="9" fill="#787774" text-anchor="middle">LinkedIn · RedNote · X · Notion Publish</text>
 
   <line x1="66" y1="228" x2="228" y2="228" stroke="#e9e9e7" stroke-width="1"/>
-  <text x="147" y="248" font-size="8.5" fill="#787774" text-anchor="middle" font-weight="600">Signal to Asset</text>
+  <text x="147" y="248" font-size="8.5" fill="#787774" text-anchor="middle" font-weight="600">Brand OS</text>
   <text x="147" y="264" font-size="8" fill="#c9c8c7" text-anchor="middle">Claude Code Agent · 2026</text>
 
   <!-- SLIDE 02 — Problem -->
@@ -212,10 +212,10 @@
   <text x="722" y="566" font-size="8.5" fill="#787774">Paste a URL. It does the rest.</text>
 
   <line x1="736" y1="580" x2="890" y2="580" stroke="#e9e9e7" stroke-width="1"/>
-  <text x="813" y="600" font-size="8" fill="#C8A870" text-anchor="middle" font-weight="600">github.com/Yingshill/signal-to-asset</text>
+  <text x="813" y="600" font-size="8" fill="#C8A870" text-anchor="middle" font-weight="600">github.com/Yingshill/brand_os</text>
 
   <!-- Footer -->
   <line x1="42" y1="652" x2="918" y2="652" stroke="#e9e9e7" stroke-width="1"/>
-  <text x="480" y="672" font-size="8" fill="#c9c8c7" text-anchor="middle">Signal to Asset · Code Walkthrough Carousel · Notion Light · 2026-05 · Yingshi Liu</text>
+  <text x="480" y="672" font-size="8" fill="#c9c8c7" text-anchor="middle">Brand OS · Code Walkthrough Carousel · Notion Light · 2026-05 · Yingshi Liu</text>
 
 </svg>

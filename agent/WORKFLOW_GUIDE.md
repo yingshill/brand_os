@@ -215,7 +215,7 @@ User Action:
    └─ You need to manually mention the agent in Claude Code
       OR copy/paste the entry details into Claude Code
    ↓
-4. You send: "@Marketing Manager, here's a new project: [entry details]"
+4. You send: "@Creative Content Manager, here's a new project: [entry details]"
    ↓
 5. Claude Code agent reads your message + processes the entry
    ├─ Extracts Title, Core Insight, Why It Matters
@@ -299,7 +299,7 @@ Generate draft assets for any topic, without going through Project Mode.
 ### Both Setups (Very Similar)
 
 ```
-User: "@Marketing Manager, draft a LinkedIn carousel about AI automation"
+User: "@Creative Content Manager, draft a LinkedIn carousel about AI automation"
 
 Agent:
 1. Reads your request
@@ -329,7 +329,7 @@ Agent:
 If the schedule doesn't run (or you want to run it manually):
 
 ```
-User: "@Marketing Manager, run weekly planning"
+User: "@Creative Content Manager, run weekly planning"
 
 Agent:
 1. Queries Marketing Asset Library for Status = Ready

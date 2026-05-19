@@ -6,7 +6,7 @@ This guide explains how to set up the Notion API integration so the Claude Code 
 
 1. Go to https://www.notion.com/my-integrations
 2. Click **+ New integration**
-3. Name it: `Marketing Manager Agent`
+3. Name it: `Creative Content Manager Agent`
 4. Select your workspace
 5. Grant capabilities:
    - ✅ Read content
@@ -20,7 +20,7 @@ For each of your 6 databases, you need to:
 
 1. Open the database in Notion
 2. Click **Share** (top right)
-3. Search for your integration name: `Marketing Manager Agent`
+3. Search for your integration name: `Creative Content Manager Agent`
 4. Click to add it (grant Full access)
 5. Copy the **Database ID** from the URL
 

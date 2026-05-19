@@ -3,10 +3,10 @@ Automated test suite — runs against live Notion APIs.
 Cleans up all test rows it creates (archives them).
 
 Usage:
-    python scripts/test_run.py
+    python scripts/test_run.py [--brand brand_name]
 
 Optional — test fetch_entry against a real source page:
-    python scripts/test_run.py --url "https://www.notion.so/..."
+    python scripts/test_run.py --url "https://www.notion.so/..." [--brand brand_name]
 """
 import sys
 import json
@@ -18,7 +18,16 @@ sys.path.insert(0, os.path.dirname(__file__))
 from notion_client import (
     NOTION_TOKEN, DB_IDS, get_page, query_database, create_page, update_page,
     extract_page_id, title_prop, rich_text_prop, select_prop, status_prop, relation_prop,
+    set_brand
 )
+
+parser = argparse.ArgumentParser(add_help=False)
+parser.add_argument('--brand', default='default')
+parser.add_argument('--url', default='')
+args, _ = parser.parse_known_args()
+
+# Set brand context early
+set_brand(args.brand)
 
 PASS = '✅'
 FAIL = '❌'
@@ -42,7 +51,7 @@ def archive(page_id):
 
 # ── Test 1: Token ─────────────────────────────────────────────────────────────
 
-print("\n── Test 1: API connectivity ──")
+print(f"\n── Test 1: API connectivity (Brand: {args.brand}) ──")
 try:
     import requests
     from notion_client import HEADERS, BASE_URL
@@ -58,7 +67,7 @@ except Exception as e:
 print("\n── Test 2: Database reachability ──")
 for db_name, db_id in DB_IDS.items():
     if not db_id or len(db_id) < 32:
-        report(f"{db_name}", False, "missing or invalid ID in .env")
+        report(f"{db_name}", False, "missing or invalid ID in config/env")
         continue
     try:
         rows = query_database(db_id)
@@ -69,15 +78,14 @@ for db_name, db_id in DB_IDS.items():
 # ── Test 3: fetch_entry (optional — requires --url) ───────────────────────────
 
 print("\n── Test 3: fetch_entry ──")
-parser = argparse.ArgumentParser(add_help=False)
-parser.add_argument('--url', default='')
-args, _ = parser.parse_known_args()
-
 if args.url:
     try:
         import subprocess, shlex
+        cmd = [sys.executable, 'scripts/fetch_entry.py', args.url]
+        if args.brand:
+            cmd.append(args.brand)
         result = subprocess.run(
-            [sys.executable, 'scripts/fetch_entry.py', args.url],
+            cmd,
             capture_output=True, text=True, cwd=Path(__file__).parent.parent
         )
         data = json.loads(result.stdout)
@@ -97,7 +105,7 @@ test_project_id = None
 try:
     db_id = DB_IDS['marketing_projects']
     page = create_page(db_id, {
-        'Name': title_prop('[TEST] signal-to-asset automated test'),
+        'Name': title_prop('[TEST] brand_os automated test'),
         'Status': select_prop('Planning'),
     })
     test_project_id = page['id']
@@ -112,7 +120,7 @@ test_asset_id = None
 try:
     db_id = DB_IDS['marketing_assets']
     props = {
-        'Asset Name': title_prop('[TEST] signal-to-asset automated test asset'),
+        'Asset Name': title_prop('[TEST] brand_os automated test asset'),
         'Type': select_prop('Post'),
         'Channel': select_prop('LinkedIn'),
         'Status': status_prop('Draft'),
@@ -132,7 +140,7 @@ test_todo_id = None
 try:
     db_id = DB_IDS['marketing_todos']
     props = {
-        'Task': title_prop('[TEST] Review — signal-to-asset automated test'),
+        'Task': title_prop('[TEST] Review — brand_os automated test'),
         'Priority': select_prop('🔥 High'),
         'Status': status_prop('Not Started'),
     }
@@ -143,6 +151,34 @@ try:
     report("create_todo — create", True, f"id: {test_todo_id[:8]}...")
 except Exception as e:
     report("create_todo — create", False, str(e)[:80])
+
+# ── Test 7: generate_visual (optional — requires OPENAI_API_KEY) ──────────────
+
+print("\n── Test 7: generate_visual ──")
+openai_key = os.environ.get('OPENAI_API_KEY')
+if openai_key:
+    try:
+        import subprocess
+        cmd = [sys.executable, 'scripts/generate_visuals.py']
+        input_data = json.dumps({
+            "brand": args.brand,
+            "prompt": "Test visual for automated suite",
+            "aspect_ratio": "1:1"
+        })
+        result = subprocess.run(
+            cmd,
+            input=input_data,
+            capture_output=True, text=True, cwd=Path(__file__).parent.parent
+        )
+        data = json.loads(result.stdout)
+        if 'error' in data:
+            report("generate_visual", False, data['error'])
+        else:
+            report("generate_visual", True, f"url: {data.get('image_url', '')[:50]}...")
+    except Exception as e:
+        report("generate_visual", False, str(e))
+else:
+    print(f"  {SKIP} generate_visual — set OPENAI_API_KEY in .env to test (skipped)")
 
 # ── Cleanup ───────────────────────────────────────────────────────────────────
 

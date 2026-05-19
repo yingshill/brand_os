@@ -1,4 +1,4 @@
-# Decisions — Signal to Asset
+# Decisions — Brand OS
 
 Architecture, stack, and design decisions logged as they were made.
 

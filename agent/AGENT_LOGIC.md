@@ -16,7 +16,7 @@ START: Agent Wakes Up
     ├─→ Sunday 8pm cron?
     │   └─→ WEEKLY PLANNING MODE (see below)
     │
-    ├─→ User message: "@Marketing Manager, [query]"
+    ├─→ User message: "@Creative Content Manager, [query]"
     │   └─→ Is it about a source entry?
     │       ├─→ Yes, with "📣 Project" tag?
     │       │   └─→ PROJECT MODE (see below)

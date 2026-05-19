@@ -1,6 +1,6 @@
 # Claude Code Scheduled Agent Setup
 
-This document explains how to run the Marketing Manager as a Claude Code scheduled agent instead of a Notion custom agent.
+This document explains how to run the Creative Content Manager as a Claude Code scheduled agent instead of a Notion custom agent.
 
 ## Quick Start
 
@@ -75,7 +75,7 @@ You can invoke the agent manually by running:
 
 Or by mentioning the agent in a message with a query like:
 ```
-@Marketing Manager, generate assets for this topic: [source entry details]
+@Creative Content Manager, generate assets for this topic: [source entry details]
 ```
 
 ## Disabling the Schedule

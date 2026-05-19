@@ -1,6 +1,6 @@
-# Claude Code Agent: Marketing Manager
+# Claude Code Agent: Creative Content Manager
 
-This folder contains the setup and configuration for running the Marketing Manager as a **Claude Code scheduled agent** instead of a Notion custom agent.
+This folder contains the setup and configuration for running the Creative Content Manager as a **Claude Code scheduled agent** instead of a Notion custom agent.
 
 ## What You'll Find Here
 
@@ -16,7 +16,7 @@ This folder contains the setup and configuration for running the Marketing Manag
 ### 1. Get Your Notion Integration Token
 
 1. Visit https://www.notion.com/my-integrations
-2. Create a new integration: `Marketing Manager Agent`
+2. Create a new integration: `Creative Content Manager Agent`
 3. Grant read + write permissions
 4. Copy the **Internal Integration Token**
 

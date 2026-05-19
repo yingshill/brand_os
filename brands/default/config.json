@@ -1,0 +1,18 @@
+{
+  "name": "Knowledge Brand",
+  "notion": {
+    "db_ids": {
+      "ai_daily_hits": "d285f3ad9a954c2ea099c3b105d7491d",
+      "github_trending": "2220b9ab0d9142e4888027f5bb29ae70",
+      "podcast_digest": "1fb8d50a4fb548389761be7371729bea",
+      "course_digest": "66d051ff7f7c42c3af6b9f6c324bcdf4",
+      "marketing_projects": "32e141f8582a8042b780000c982ea128",
+      "marketing_assets": "93c1f83175b44194aaeeea81373b5be2",
+      "marketing_todos": "f908a73380624f73aff2e65e40b404db"
+    },
+    "page_ids": {
+      "marketing_plan_template": "4a5b6c7d8e9f0g1h2i3j4k5l6m7n8o9p0",
+      "ai_command_center": "1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7"
+    }
+  }
+}

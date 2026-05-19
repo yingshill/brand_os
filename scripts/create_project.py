@@ -73,8 +73,13 @@ def create_project(data: dict) -> dict:
 if __name__ == '__main__':
     try:
         data = json.loads(sys.stdin.read())
+        brand = data.get('brand', 'default')
+        from notion_client import set_brand
+        set_brand(brand)
+        
         result = create_project(data)
         print(json.dumps(result, indent=2, ensure_ascii=False))
     except Exception as e:
+        from notion_client import classify_error
         print(json.dumps({'error': str(e), 'kind': classify_error(e)}))
         sys.exit(1)
