@@ -36,6 +36,7 @@ def log_run(data: dict) -> dict:
 
     entry = {
         'ts': datetime.now(timezone.utc).isoformat(),
+        'brand': data.get('brand', 'default'),
         'project_id': data.get('project_id', ''),
         'project_title': data.get('project_title', ''),
         'assets': data.get('assets', []),
@@ -50,6 +51,7 @@ def log_run(data: dict) -> dict:
 
     return {
         'log_file': str(LOG_FILE),
+        'brand': entry['brand'],
         'assets_created': assets_created,
         'assets_existing': len(entry['assets']) - assets_created,
         'todos_created': todos_created,

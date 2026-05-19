@@ -82,30 +82,57 @@ def list_brands() -> list:
     return [d.name for d in brands_dir.iterdir() if d.is_dir()]
 
 
+# Foundational keys are global — shared across all brands, sourced from .env.
+# Per-brand config.json can carry source DBs and brand-specific page IDs.
+FOUNDATIONAL_DB_KEYS = ('marketing_projects', 'marketing_assets', 'marketing_todos')
+FOUNDATIONAL_PAGE_KEYS = ('marketing_plan_template',)
+
+
+def _foundational_db_ids() -> dict:
+    return {
+        'marketing_projects': os.environ.get('NOTION_DB_MARKETING_PROJECTS', ''),
+        'marketing_assets':   os.environ.get('NOTION_DB_MARKETING_ASSETS', ''),
+        'marketing_todos':    os.environ.get('NOTION_DB_MARKETING_TODOS', ''),
+    }
+
+
+def _foundational_page_ids() -> dict:
+    return {
+        'marketing_plan_template': os.environ.get('NOTION_PAGE_MARKETING_PLAN_TEMPLATE', ''),
+    }
+
+
 def load_brand_config(brand_name: str = 'default') -> dict:
-    """Load brand-specific database and page IDs."""
+    """
+    Load DB/page IDs for a brand. Foundational marketing DBs always come from
+    .env (shared across all brands). Per-brand config.json layers source DBs
+    and brand-specific page IDs on top; any foundational keys present in the
+    brand config are ignored.
+    """
+    db_ids = _foundational_db_ids()
+    page_ids = _foundational_page_ids()
+
     brand_path = Path(__file__).parent.parent / 'brands' / brand_name / 'config.json'
     if brand_path.exists():
         with open(brand_path) as f:
-            config = json.load(f)
-            return config.get('notion', {})
-    
-    # Fallback to .env for legacy support
-    return {
-        'db_ids': {
-            'ai_daily_hits':        os.environ.get('NOTION_DB_AI_DAILY_HITS', ''),
-            'github_trending':      os.environ.get('NOTION_DB_GITHUB_TRENDING', ''),
-            'podcast_digest':       os.environ.get('NOTION_DB_PODCAST_DIGEST', ''),
-            'course_digest':        os.environ.get('NOTION_DB_COURSE_DIGEST', ''),
-            'marketing_projects':   os.environ.get('NOTION_DB_MARKETING_PROJECTS', ''),
-            'marketing_assets':     os.environ.get('NOTION_DB_MARKETING_ASSETS', ''),
-            'marketing_todos':      os.environ.get('NOTION_DB_MARKETING_TODOS', ''),
-        },
-        'page_ids': {
-            'marketing_plan_template': os.environ.get('NOTION_PAGE_MARKETING_PLAN_TEMPLATE', ''),
-            'ai_command_center':       os.environ.get('NOTION_PAGE_AI_COMMAND_CENTER', ''),
-        }
-    }
+            brand_notion = json.load(f).get('notion', {})
+        for k, v in brand_notion.get('db_ids', {}).items():
+            if k not in FOUNDATIONAL_DB_KEYS:
+                db_ids[k] = v
+        for k, v in brand_notion.get('page_ids', {}).items():
+            if k not in FOUNDATIONAL_PAGE_KEYS:
+                page_ids[k] = v
+    else:
+        # No brand config — pick up source DBs from env (legacy single-tenant mode)
+        for k in ('ai_daily_hits', 'github_trending', 'podcast_digest', 'course_digest'):
+            val = os.environ.get(f'NOTION_DB_{k.upper()}', '')
+            if val:
+                db_ids[k] = val
+        ai_cc = os.environ.get('NOTION_PAGE_AI_COMMAND_CENTER', '')
+        if ai_cc:
+            page_ids['ai_command_center'] = ai_cc
+
+    return {'db_ids': db_ids, 'page_ids': page_ids}
 
 
 def load_brand_style(brand_name: str = 'default') -> dict:

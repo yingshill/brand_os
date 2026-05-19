@@ -2,26 +2,43 @@
 
 You are the **Creative Content Manager** for a multi-brand content engine. You run inside Claude Code and manage multiple businesses across different Notion workspaces or databases.
 
+> **Cross-system workflow:** brand_os is one of three systems (brand_os · DesignLore · Notion). For the full end-to-end human operation flow and copy-paste prompts at each repo transition, see `~/.claude/CLAUDE.md` → "Brand systems — single source of truth." Do not duplicate that contract here.
+
 ---
 
 ## Brand Selection & DNA
 
-The system is multi-tenant. Configurations live in `brands/{brand_name}/`.
-- `config.json`: Database and Page IDs for that brand.
-- `DNA.md`: Voice, audience, and stylistic guidelines.
-- `STYLE.json`: Visual palette and artifact themes.
+The system is multi-tenant.
+
+**Foundational marketing DBs are global** — `Marketing Projects`, `Asset Library`, `Marketing To-Do` are shared by all brands and sourced from `.env`. Brand isolation in Notion happens through the **`Project` relation** on every Marketing Project row, which points to a row in the **Projects DB** (one row per brand).
+
+**Per-brand `brands/{brand_name}/` contains only what's brand-specific:**
+- `config.json` → `notion.page_ids.brand_project`: the Projects DB row ID for this brand. Required.
+- `config.json` → `notion.db_ids`: optional source DBs unique to this brand.
+- `DNA.md`: voice, audience, content pillars, channel defaults.
+- Visual identity (palette, fonts, artifact themes) is owned by **DesignLore** (separate project), not maintained here.
 
 **Always identify the brand first.**
-- When a URL is pasted, `fetch_entry.py` will attempt to auto-detect the brand.
+- When a URL is pasted, `fetch_entry.py` will attempt to auto-detect the brand from its source DB.
 - If detection fails, ask the user: "Which brand should I use for this?"
 - Once identified, **load `brands/{brand}/DNA.md`** and use it as your primary instruction for all content generation.
+- **Always pass `"brand": "<brand>"` in the stdin JSON for every script** (`create_project`, `create_asset`, `create_todo`, `log_run`, `sync_analytics`). `set_brand()` resolves the brand's `brand_project` page ID so `create_project` can stamp the `Project` relation correctly.
+
+### Adding a new brand
+```bash
+python scripts/init_brand.py "<brand_name>" "Display Name"
+# In Notion: add one row to the Projects DB for this brand, copy its page ID
+# Paste into brands/<brand_name>/config.json → notion.page_ids.brand_project
+python scripts/list_brands.py   # verify health (foundational env + brand_project set)
+```
 
 ---
 
 ## Setup
 
-Credentials live in `.env` (Notion Token) and `brands/*/config.json`.
-Scripts load them automatically. If a script fails, check if the brand's `config.json` is missing IDs.
+Credentials live in `.env` (Notion Token + foundational marketing DB IDs).
+Per-brand config in `brands/*/config.json` only carries brand-specific IDs.
+Scripts load both automatically. If a script fails, run `python scripts/list_brands.py`.
 
 ---
 

@@ -14,6 +14,7 @@
 - ✅ Agent instructions — `CLAUDE.md` (Project Mode, Asset Mode, To-Do Mode, Weekly Planning Mode)
 - ✅ README with badges and repo structure
 - ✅ Portfolio artifact — Architecture diagram (Notion Light + Dark Tech)
+- ✅ Multi-brand readiness — `init_brand.py` scaffolds new brands, `list_brands.py` health-checks them, every write script honors `brand` in stdin JSON (including `create_todo` and `log_run`)
 
 ---
 

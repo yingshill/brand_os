@@ -16,12 +16,14 @@ import json
 import os
 sys.path.insert(0, os.path.dirname(__file__))
 from notion_client import (
-    query_database, create_page, extract_text, classify_error, DB_IDS,
-    title_prop, rich_text_prop, select_prop,
+    query_database, create_page, extract_text, classify_error, DB_IDS, PAGE_IDS,
+    title_prop, rich_text_prop, select_prop, relation_prop,
 )
 
 
-def find_existing_project(title: str) -> dict:
+def find_existing_project(title: str, brand_project_id: str = '') -> dict:
+    """Find a Marketing Project by title, optionally scoped to one brand via
+    the `Project` relation. Without a brand scope, titles collide across brands."""
     db_id = DB_IDS['marketing_projects']
     if not db_id:
         return None
@@ -32,8 +34,13 @@ def find_existing_project(title: str) -> dict:
         existing = extract_text(
             props.get('Name') or props.get('Title') or {}
         ).lower().strip()
-        if existing and (title_lower in existing or existing in title_lower):
-            return page
+        if not (existing and (title_lower in existing or existing in title_lower)):
+            continue
+        if brand_project_id:
+            relations = props.get('Project', {}).get('relation', [])
+            if not any(r.get('id', '').replace('-', '') == brand_project_id.replace('-', '') for r in relations):
+                continue
+        return page
     return None
 
 
@@ -44,8 +51,9 @@ def create_project(data: dict) -> dict:
 
     title = data.get('title', '').strip()
     positioning = data.get('positioning', '').strip()
+    brand_project_id = data.get('brand_project_id') or PAGE_IDS.get('brand_project', '')
 
-    existing = find_existing_project(title)
+    existing = find_existing_project(title, brand_project_id)
     if existing:
         return {
             'action': 'linked',
@@ -54,13 +62,17 @@ def create_project(data: dict) -> dict:
             'title': title,
         }
 
-    page = create_page(db_id, {
+    props = {
         'Name': title_prop(title),
         'Positioning Statement': rich_text_prop(positioning),
         'Status': select_prop('Planning'),
         'Priority': select_prop('🟡 Medium'),
         'Tier': select_prop('🔵 Tier 3'),
-    })
+    }
+    if brand_project_id:
+        props['Project'] = relation_prop([brand_project_id])
+
+    page = create_page(db_id, props)
 
     return {
         'action': 'created',

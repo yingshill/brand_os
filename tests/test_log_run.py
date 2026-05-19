@@ -75,3 +75,17 @@ class TestLogRun:
         result = lr.log_run(SAMPLE_RUN)
         assert 'log_file' in result
         assert result['log_file'].endswith('runs.jsonl')
+
+    def test_brand_persisted_in_entry(self):
+        lr.log_run({**SAMPLE_RUN, 'brand': 'other'})
+        entry = json.loads((self.tmp / 'runs.jsonl').read_text().strip())
+        assert entry['brand'] == 'other'
+
+    def test_brand_defaults_to_default(self):
+        lr.log_run(SAMPLE_RUN)
+        entry = json.loads((self.tmp / 'runs.jsonl').read_text().strip())
+        assert entry['brand'] == 'default'
+
+    def test_brand_returned_in_summary(self):
+        result = lr.log_run({**SAMPLE_RUN, 'brand': 'other'})
+        assert result['brand'] == 'other'

@@ -16,7 +16,6 @@ This is the default brand DNA for Yingshi Liu's personal brand.
 ## Core Keywords
 - System design, agentic workflows, Notion, automation, scaling, signal vs noise.
 
-## Visual Palette (Reference only)
-- Navy + Amber (Notion Light theme)
-- Linen + Taupe (Cartesian style)
-- Cobalt + Cream (Grid style)
+## Visual Identity
+- Visual identity: `DesignLore/default/` (separate repo — single source of truth for logo, palette, type, themes).
+- Do not hand-edit visual tokens here.

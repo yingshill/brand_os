@@ -102,6 +102,22 @@ class TestCreateTodo:
         with pytest.raises(ValueError, match="NOTION_DB_MARKETING_TODOS"):
             ct.create_todo({'task': 'Review'})
 
+    @patch('create_todo.find_existing_todo', return_value=None)
+    @patch('create_todo.create_page', return_value=MOCK_PAGE)
+    @patch('create_todo.DB_IDS', {'marketing_todos': 'real-db-id'})
+    @patch('create_todo.set_brand')
+    def test_brand_field_triggers_set_brand(self, mock_set, mock_create, mock_find):
+        ct.create_todo({'task': 'Review', 'brand': 'other'})
+        mock_set.assert_called_once_with('other')
+
+    @patch('create_todo.find_existing_todo', return_value=None)
+    @patch('create_todo.create_page', return_value=MOCK_PAGE)
+    @patch('create_todo.DB_IDS', {'marketing_todos': 'real-db-id'})
+    @patch('create_todo.set_brand')
+    def test_no_brand_field_skips_set_brand(self, mock_set, mock_create, mock_find):
+        ct.create_todo({'task': 'Review'})
+        mock_set.assert_not_called()
+
 
 class TestCreateTodoBatch:
     @patch('create_todo.find_existing_todo', return_value=None)

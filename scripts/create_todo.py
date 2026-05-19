@@ -9,16 +9,22 @@ Todo names follow the deterministic convention:
 
 Usage — single task:
     python scripts/create_todo.py <<'JSON'
-    {"task": "Review — MCP is the new API — LinkedIn (PM)", "priority": "🔥 High", "channel": "LinkedIn", "asset_id": "..."}
+    {"brand": "default", "task": "Review — MCP is the new API — LinkedIn (PM)", "priority": "🔥 High", "channel": "LinkedIn", "asset_id": "..."}
     JSON
 
-Usage — batch:
+Usage — batch (per-item brand):
     python scripts/create_todo.py <<'JSON'
-    [{"task": "Review — ...", ...}, {"task": "Publish — ...", ...}]
+    [{"brand": "default", "task": "Review — ...", ...}, {"brand": "default", "task": "Publish — ...", ...}]
+    JSON
+
+Usage — batch (shared brand wrapper):
+    python scripts/create_todo.py <<'JSON'
+    {"brand": "default", "items": [{"task": "Review — ..."}, {"task": "Publish — ..."}]}
     JSON
 
 JSON shape (single):
     {
+      "brand": "default",
       "task": "Review — {asset_name}",
       "priority": "🔥 High | 🟡 Medium",
       "channel": "LinkedIn",
@@ -34,6 +40,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from notion_client import (
     query_database, create_page, classify_error, DB_IDS,
     title_prop, select_prop, relation_prop, status_prop,
+    set_brand,
 )
 
 
@@ -49,6 +56,8 @@ def find_existing_todo(task: str) -> dict | None:
 
 
 def create_todo(data: dict) -> dict:
+    if 'brand' in data:
+        set_brand(data['brand'])
     db_id = DB_IDS['marketing_todos']
     if not db_id:
         raise ValueError("NOTION_DB_MARKETING_TODOS is not set in .env")
@@ -89,7 +98,14 @@ def create_todo(data: dict) -> dict:
 if __name__ == '__main__':
     try:
         raw = json.loads(sys.stdin.read())
-        if isinstance(raw, list):
+        if isinstance(raw, dict) and 'items' in raw:
+            wrapper_brand = raw.get('brand')
+            items = raw['items']
+            if wrapper_brand:
+                for item in items:
+                    item.setdefault('brand', wrapper_brand)
+            result = [create_todo(item) for item in items]
+        elif isinstance(raw, list):
             result = [create_todo(item) for item in raw]
         else:
             result = create_todo(raw)

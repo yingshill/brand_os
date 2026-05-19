@@ -121,6 +121,24 @@ Architecture, stack, and design decisions logged as they were made.
 
 ---
 
+## Multi-brand routing — `brand` field on every stdin payload, no per-process flag
+**Date:** 2026-05-19
+**Context:** Each Notion-writing script is a separate Python process invoked by the agent. `notion_client.DB_IDS` is a module-level dict populated from `brands/default/config.json` at import time. Without an explicit signal per call, every script silently writes to the default brand — which is what was happening in `create_todo.py` and `log_run.py` before this fix.
+**Options considered:** (A) Environment variable `BRAND_OS_BRAND` set by the agent before each Bash call · (B) CLI flag `--brand` on every script · (C) `"brand"` field in the stdin JSON payload, calling `set_brand()` early in the handler
+**Decision:** Option C for all stdin-driven scripts; `--brand` argparse for the argv-driven ones (`weekly_planning`, `generate_post_mortem`, `list_published`, `eval_run`, `test_run`). Every script that performs a Notion write is required to call `set_brand()` before reading `DB_IDS`.
+**Tradeoffs:** Brand selection is co-located with the payload — easy to grep for, easy to audit in `logs/runs.jsonl`. Cost is one extra line per script and the contract that the agent must always emit `"brand"`. Enforced by `CLAUDE.md` and by `scripts/list_brands.py` which fails CI if a brand has missing IDs.
+
+---
+
+## Foundational marketing DBs are global; brand isolation via `Project` relation
+**Date:** 2026-05-19
+**Context:** Multi-brand v1 had each brand's `config.json` repeat the IDs for `marketing_projects`, `marketing_assets`, `marketing_todos`. Same three DBs, copy-pasted across every brand. The user pointed out: those are foundational, every brand needs them, no point repeating. Then clarified the Notion structure: there is one **Projects DB** with one row per brand, and every Marketing Project row carries a `Project` relation pointing back to its brand's row.
+**Options considered:** (A) Add a `Brand` Select property on every marketing row (new property, all brands tagged in-row) · (B) Use the existing Projects-DB relation already in Notion · (C) No isolation at all (one combined timeline, no tag).
+**Decision:** Option B. The 3 foundational DBs come from `.env` only (`NOTION_DB_MARKETING_*`), shared by all brands. Each brand's config.json carries `notion.page_ids.brand_project` — the Projects-DB row ID for that brand. `create_project.py` sets the `Project` relation on every new Marketing Project row, scoping it to the brand. Assets and Todos inherit brand context up the existing project→asset→todo relation chain. `STYLE.json` is also dropped (visual identity owned by DesignLore).
+**Tradeoffs:** Per-brand config shrinks dramatically (just `name` + `brand_project` + optional source DBs). Brand filtering in Notion uses the relation that's already there — no new property. Cost: `find_existing_project` must filter by `Project` relation to avoid cross-brand title collisions; `find_existing_todo` currently filters by task name only and could theoretically collide across brands, though in practice task names embed the project title. Flagged as follow-up.
+
+---
+
 ## Project tracking — ROADMAP.md + DECISIONS.md (not a single file)
 **Date:** 2026-05
 **Context:** Needed a way to track progress, backlog, artifacts, and design decisions. A single file mixes concerns.
