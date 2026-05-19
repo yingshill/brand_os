@@ -49,6 +49,20 @@
 
 ### Portfolio artifacts
 
+#### Redo existing artifacts 🔲
+
+Architecture diagram, code walkthrough carousel, and case study were built under the old "signal-to-asset" name. All three need to be rebuilt with updated copy and branding to reflect the **Brand OS** rename.
+
+| Artifact | Action needed |
+|---|---|
+| Architecture diagram | Rebuild — update title, system name, any "signal-to-asset" labels |
+| Code walkthrough carousel | Rebuild — update project name references in slide copy |
+| Case study | Rebuild — update title and project name throughout |
+
+**Blocked by:** nothing — can do now.
+
+---
+
 #### Demo Video / GIF 🔲
 
 60–90 second screen recording of Project Mode running end-to-end.
@@ -84,19 +98,18 @@
 
 | Artifact | Status | Themes | Placement |
 |---|---|---|---|
-| Architecture diagram | ✅ | Notion Light · Dark Tech | Portfolio · LinkedIn · GitHub README · GitHub profile |
-| Code walkthrough carousel | ✅ | Notion Light | LinkedIn · GitHub README · Portfolio |
-| Case study | ✅ | Notion Light | Portfolio · LinkedIn · GitHub README |
+| Architecture diagram | 🔲 redo | Notion Light · Dark Tech | Portfolio · LinkedIn · GitHub README · GitHub profile |
+| Code walkthrough carousel | 🔲 redo | Notion Light | LinkedIn · GitHub README · Portfolio |
+| Case study | 🔲 redo | Notion Light | Portfolio · LinkedIn · GitHub README |
 | Demo video / GIF | 🔲 backlog | — | Portfolio hero · LinkedIn · GitHub README · GitHub profile |
 
 **Artifact files:**
 
 | Artifact | Theme | Folder |
 |---|---|---|
-| Architecture diagram | Notion Light | `artifacts/architecture-diagram/notion-light/` |
-| Architecture diagram | Dark Tech | `artifacts/architecture-diagram/dark-tech/` |
-| Code walkthrough carousel | Notion Light | `artifacts/code-walkthrough-carousel/notion-light/` |
-| Case study | Notion Light | `artifacts/case-study/notion-light/` |
+| Architecture diagram | Notion Light | `root-project-artifacts/architecture-diagram/notion-light/` |
+| Code walkthrough carousel | Notion Light | `root-project-artifacts/code-walkthrough-carousel/notion-light/` |
+| Case study | Notion Light | `root-project-artifacts/case-study/notion-light/` |
 
 Each folder: `index.html` (self-contained portal) + `diagram.svg` (raw, embeddable).
 
