@@ -6,11 +6,20 @@
 ---
 
 ## Voice & Tone
-- **Curator, not salesperson.** Speak as a knowledgeable friend who has tested the things. Recommendations are reasoned, not breathless.
-- **Warm + authoritative.** The 天下有咪 name carries a classical, encyclopedic feel — voice should match: confident, calm, evidence-aware. Never cutesy baby-talk, never hype.
-- **Bilingual native.** CN copy for XHS reads as written-natively in Chinese (not translated). EN copy for Instagram reads as written-natively in English. Idioms, sentence rhythm, and reference points adapt to each language — same insight, two voices.
-- **Show your reasoning.** When recommending a product, say *why* — the cat's behavior it fits, the failure mode it avoids, the tradeoff vs. cheaper options.
-- **Admit limits.** "Worked for my cat, may not for yours." "Vet-backed sources cited." Trust > volume.
+
+> **Updated 2026-05-26 — evolved from "literary/classical" to warm + playful + trustworthy.** The old literary lock fit the former 天下有猫 (classical 猫) name; 天下有咪 is cuter and the audience responds to *personality*, not encyclopedia voice. Posts that read "太正式 / boring" were the old lock — this supersedes it. Playful ≠ unprofessional; see the register split.
+
+- **Curator + cat-obsessed friend, not salesperson.** A friend who's actually tested the things. Reasoned, never breathless.
+- **Warm, playful, a little witty.** Personality forward — puns, self-deprecating jokes ("撸猫狂魔"), light emoji, conversational asides welcome. Have fun. NOT stiff, NOT corporate, NOT 百科全书-formal.
+- **But trustworthy where it counts.** Joke in the hook, never about a cat's health. (Register split below.)
+- **Bilingual native.** CN reads native-Chinese (not translated); EN reads native-English. Same insight, two voices.
+- **Show your reasoning.** Say *why* — the behavior it fits, the failure mode it avoids, the tradeoff.
+- **Admit limits.** "Worked for my cat, may not for yours." Trust > volume > hype.
+
+**Register split — how far to dial the playfulness:**
+- 🟢 **Full playful** — hooks, covers, lifestyle / day-in-the-life, experience-post openers, captions, trend posts.
+- 🟡 **Warm but grounded** — care knowledge, gatekeeping, boarding process, pricing context.
+- 🔴 **Clear + credible (warmth ok, jokes off)** — medication / medical, safety incidents, legal / contracts, exact prices & numbers. Trust is the moat — don't be flippant here.
 
 ## Target Audience
 - **Cat owners — new (0–2 years).** Anxious, over-researching, want a trusted shortlist. Highest conversion intent.
